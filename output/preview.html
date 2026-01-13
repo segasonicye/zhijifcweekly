@@ -1,0 +1,351 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>冬日激战!知己足球俱乐部内战精彩纷呈</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      line-height: 1.8;
+      color: #2c3e50;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 0;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 40px 40px 50px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .team-logo {
+      width: 180px;
+      height: 180px;
+      margin: 0 auto 40px auto;
+      border-radius: 50%;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .team-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .header::before {
+      content: '⚽';
+      position: absolute;
+      font-size: 150px;
+      opacity: 0.1;
+      top: -30px;
+      right: -30px;
+      transform: rotate(15deg);
+    }
+
+    .header h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      position: relative;
+      z-index: 1;
+    }
+
+    .info-box {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 25px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .info-item {
+      background: rgba(255,255,255,0.25);
+      backdrop-filter: blur(10px);
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-size: 15px;
+      font-weight: 500;
+      border: 1px solid rgba(255,255,255,0.3);
+      transition: all 0.3s ease;
+    }
+
+    .info-item:hover {
+      background: rgba(255,255,255,0.35);
+      transform: translateY(-2px);
+    }
+
+    .star-section {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 25px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .star-badge {
+      background: rgba(255,255,255,0.95);
+      color: #667eea;
+      padding: 15px 30px;
+      border-radius: 15px;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .star-badge .icon {
+      font-size: 24px;
+    }
+
+    .content {
+      padding: 50px 40px;
+      background: white;
+    }
+
+    .content p {
+      margin-bottom: 20px;
+      font-size: 17px;
+      line-height: 2;
+      color: #34495e;
+    }
+
+    .content h2 {
+      font-size: 28px;
+      color: #667eea;
+      margin: 40px 0 25px 0;
+      padding-bottom: 15px;
+      border-bottom: 3px solid #667eea;
+      font-weight: 600;
+    }
+
+    .content h3 {
+      font-size: 24px;
+      color: #764ba2;
+      margin: 35px 0 20px 0;
+      font-weight: 600;
+    }
+
+    .content strong {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+
+    .photos-section {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 40px;
+      margin: 0;
+    }
+
+    .photos-section h3 {
+      text-align: center;
+      font-size: 26px;
+      color: #667eea;
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+
+    .photo-item {
+      background: white;
+      padding: 15px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      margin-bottom: 25px;
+      transition: transform 0.3s ease;
+    }
+
+    .photo-item:hover {
+      transform: translateY(-5px);
+    }
+
+    .photo-item img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      display: block;
+    }
+
+    .photo-caption {
+      text-align: center;
+      color: #7f8c8d;
+      font-size: 15px;
+      margin-top: 12px;
+      font-style: italic;
+    }
+
+    .attendance-list {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      padding: 40px;
+      margin: 0;
+    }
+
+    .attendance-list h3 {
+      text-align: center;
+      font-size: 26px;
+      color: #2c3e50;
+      margin-bottom: 25px;
+      font-weight: 600;
+    }
+
+    .attendance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .attendance-item {
+      background: white;
+      padding: 12px 18px;
+      border-radius: 25px;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 500;
+      color: #2c3e50;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+
+    .attendance-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    }
+
+    .footer {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+      font-size: 16px;
+    }
+
+    .footer p {
+      margin: 8px 0;
+      opacity: 0.95;
+    }
+
+    .footer-emoji {
+      font-size: 24px;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 10px;
+      }
+
+      .header {
+        padding: 40px 20px;
+      }
+
+      .header h1 {
+        font-size: 28px;
+      }
+
+      .star-section {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .content {
+        padding: 30px 20px;
+      }
+
+      .content h2 {
+        font-size: 24px;
+      }
+
+      .photos-section,
+      .attendance-list {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="team-logo">
+        <img src="file:///C:/Users/segas/Desktop/河伯战报/logo.png" alt="河伯FC Logo">
+      </div>
+      <h1>冬日激战!知己足球俱乐部内战精彩纷呈</h1>
+      <div class="info-box">
+        <div class="info-item">📅 2025-01-09</div>
+        <div class="info-item">⚔️ 内战</div>
+        <div class="info-item" style="font-size: 18px;">多场对抗</div>
+        <div class="info-item">📍 福沁球场</div>
+      </div>
+      
+      <div class="star-section">
+        <div class="star-badge"><span class="icon">⭐</span><span>MVP: <strong>喜力授</strong></span></div>
+      </div>
+      
+    </div>
+
+    <div class="content">
+      <p style="line-height: 1.8; margin: 10px 0;"><br>冬日不虚度，晴光忽满帘，周六上午知己队再战福沁球场。</p><p style="line-height: 1.8; margin: 10px 0;"><h2>首发阵容</h2></p><p style="line-height: 1.8; margin: 10px 0;"><strong>蓝队</strong>: 辉哥、托蒂、王书记、喜力授、叶伯海、德国小弟</p><p style="line-height: 1.8; margin: 10px 0;"><strong>红队</strong>: 张航、小王、东哥、叶老师、高主席、潘书记</p><p style="line-height: 1.8; margin: 10px 0;">两队势均力敌，开场后小王、托蒂相继造险，双方攻防逐渐加快。</p><p style="line-height: 1.8; margin: 10px 0;"><h2>首节较量</h2></p><p style="line-height: 1.8; margin: 10px 0;">蓝队率先把握机会：辉哥左路发起进攻，喜力授边路带球杀入禁区传后点，德国小弟跟上包抄一蹴而就<strong>1-0</strong>！</p><p style="line-height: 1.8; margin: 10px 0;">没过多久，蓝队利用反击，喜力授精准直塞助队友单刀破门<strong>2-0</strong>。</p><p style="line-height: 1.8; margin: 10px 0;">红队逐渐稳住阵角，东哥背身挑球，张航插入禁区推射得分；红队卷土重来，潘书记预判对手的预判，门前机警前插抢射<strong>2-2</strong>。</p><p style="line-height: 1.8; margin: 10px 0;">随后蓝队在喜力授带领下打出一波凌厉攻势，前场抢断2打3成功，喜力授上演两射一传，托蒂锦上添花，王书记门前无私横传，喜力授后点遗憾错失空门，蓝队攻势如潮，<strong>6-2</strong>遥遥领先；红队本局久攻不下，带炮后卫潘书记接底线起球，头球破门<strong>3-6</strong>。</p><p style="line-height: 1.8; margin: 10px 0;"><h2>喜力授的高光时刻</h2></p><p style="line-height: 1.8; margin: 10px 0;">再度进入轮换，超仕、小卢、公正、陈韬、大鼻涕等巨星闪亮登场。本局喜力授状态依旧火热，用不可思议的帽子戏法统治全场：</p><p style="line-height: 1.8; margin: 10px 0;">- 两个外脚背捅射<br>- 一个禁区单刀连过数人后小角度打进</p><p style="line-height: 1.8; margin: 10px 0;">全场膜拜！携A类光环，带蛇精余温，那个一饮干红15杯，不服再来谁怕谁的张总又回来了！本局凭借喜力授超神发挥，蓝队<strong>3-0</strong>完胜。</p><p style="line-height: 1.8; margin: 10px 0;"><h2>激烈对抗</h2></p><p style="line-height: 1.8; margin: 10px 0;">再次轮换，红队中场超仕、小王连线，东哥、公正闪电进球<strong>2-0</strong>；超仕趁热打铁，单刀再入一球；蓝队大鼻涕组织进攻，张航横传助德国小弟破门<strong>1-3</strong>。</p><p style="line-height: 1.8; margin: 10px 0;">再度轮换，蓝队打出流畅传递，辉哥后场断球后发起进攻，托蒂左路直塞，德国小弟拿球横传，张航右路跟上冷静破门<strong>1-0</strong>；红队多次耐心寻找机会，小王高球挑传，东哥头球破门终于得手<strong>1-1</strong>；随后红队愈战愈勇，东哥背身做球，超仕推射<strong>2-1</strong>；超仕前场断球再得一分，<strong>3-1</strong>锁定胜局。</p><p style="line-height: 1.8; margin: 10px 0;">继续轮换，红队先拔头筹，小王助攻公正<strong>1-0</strong>；蓝队悲喜交加，喜力授接大鼻涕助攻，扳平比分后伤退<strong>1-1</strong>；红队把握战机，小卢助东哥<strong>2-1</strong>反超；蓝队辉哥接德国小弟做球，偷鸡梅开二度<strong>3-2</strong>；红队小王推射将比分定格在<strong>3-3</strong>。</p><p style="line-height: 1.8; margin: 10px 0;"><h2>精彩逆转</h2></p><p style="line-height: 1.8; margin: 10px 0;">再度轮换，红队超仕助东哥先声夺人；改旗易帜的蓝队小王也做出反应，助攻德国小弟进球扳平<strong>1-1</strong>；蓝队不甚乌龙后马上追回，小王左路分球，辉哥右路包抄<strong>2-2</strong>；蓝队小王中场拦截直接推射破门<strong>3-2</strong>；蓝队德国小弟打进漂亮进球：右边路倒地救球后随即起身扫射直接入网<strong>4-2</strong>；红队东哥突然发力上演梅开二度，再助攻公正进球，<strong>5-4</strong>逆转比分！</p><p style="line-height: 1.8; margin: 10px 0;"><h2>终极决战</h2></p><p style="line-height: 1.8; margin: 10px 0;">最后两队进入终极3球决战，蓝队小王扮演绝对核心作用，早早扼杀比赛悬念：</p><p style="line-height: 1.8; margin: 10px 0;">- 接德国小弟角球，禁区左肋头球破门<br>- 再度接到德国小弟中场拦截送出的助攻，一脚低射<strong>2-0</strong><br>- 在红队反扑之际，蓝队张航分球转移，小王传球到右路，辉哥门前包抄，<strong>3-0</strong>胜出结束比赛</p><p style="line-height: 1.8; margin: 10px 0;"><h2>本场之星</h2></p><p style="line-height: 1.8; margin: 10px 0;">本场比赛喜力授强势归来，闲庭信步精湛脚法，攻防兼备传射俱佳，<strong>7个进球7个助攻</strong>，包揽最佳射手、MVP，步追飞羽箭，一射动山海。</p><p style="line-height: 1.8; margin: 10px 0;">赛后主席谋划晚上精彩赛事，大家敬请期待，紫气东来美美与共，球星们周末愉快。<br></p>
+    </div>
+
+    
+    <div class="photos-section">
+      <h3>📸 精彩瞬间</h3>
+      
+            <div class="photo-item">
+              <img src="file:///C:/Users/segas/Desktop/河伯战报/photos/2025-01-09/photo-001.jpg" alt="比赛精彩瞬间">
+              <div class="photo-caption">比赛精彩瞬间</div>
+            </div>
+          
+    </div>
+    
+
+    
+    <div class="attendance-list">
+      <h3>🏃 出勤名单 (17人)</h3>
+      <div class="attendance-grid">
+        <div class="attendance-item">辉哥</div><div class="attendance-item">托蒂</div><div class="attendance-item">王书记</div><div class="attendance-item">喜力授</div><div class="attendance-item">叶伯海</div><div class="attendance-item">德国小弟</div><div class="attendance-item">张航</div><div class="attendance-item">小王</div><div class="attendance-item">东哥</div><div class="attendance-item">叶老师</div><div class="attendance-item">高主席</div><div class="attendance-item">潘书记</div><div class="attendance-item">超仕</div><div class="attendance-item">小卢</div><div class="attendance-item">公正</div><div class="attendance-item">陈韬</div><div class="attendance-item">大鼻涕</div>
+      </div>
+    </div>
+    
+
+    <div class="footer">
+      <p>— 感谢阅读 —</p>
+      <p>知己足球俱乐部 · 每周末与你相约</p>
+      <div class="footer-emoji">⚽ 💪 🎉</div>
+    </div>
+  </div>
+</body>
+</html>
+  

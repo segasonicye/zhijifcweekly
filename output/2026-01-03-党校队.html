@@ -1,0 +1,642 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>元旦假期福沁大对决,知己20-26憾负党校队</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      line-height: 1.8;
+      color: #2c3e50;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px 20px;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* 阅读进度条 */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 4px;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      z-index: 9999;
+      transition: width 0.1s ease;
+      box-shadow: 0 2px 10px rgba(102, 126, 234, 0.5);
+    }
+
+    /* 返回顶部按钮 */
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 9998;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .back-to-top.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .back-to-top:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+    }
+
+    .back-to-top:active {
+      transform: translateY(-2px);
+    }
+
+    /* 返回首页按钮 */
+    .back-to-home {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      color: #667eea;
+      padding: 12px 24px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      z-index: 9997;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 2px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .back-to-home:hover {
+      background: white;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+      border-color: #667eea;
+    }
+
+    .back-to-home:active {
+      transform: translateY(0);
+    }
+
+    .back-to-home .icon {
+      font-size: 18px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 0;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 40px 40px 50px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .team-logo {
+      width: 180px;
+      height: 180px;
+      margin: 0 auto 40px auto;
+      border-radius: 50%;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .team-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .header::before {
+      content: '⚽';
+      position: absolute;
+      font-size: 150px;
+      opacity: 0.1;
+      top: -30px;
+      right: -30px;
+      transform: rotate(15deg);
+    }
+
+    .header h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      position: relative;
+      z-index: 1;
+    }
+
+    .info-box {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 25px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .info-item {
+      background: rgba(255,255,255,0.25);
+      backdrop-filter: blur(10px);
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-size: 15px;
+      font-weight: 500;
+      border: 1px solid rgba(255,255,255,0.3);
+      transition: all 0.3s ease;
+    }
+
+    .info-item:hover {
+      background: rgba(255,255,255,0.35);
+      transform: translateY(-2px);
+    }
+
+    .star-section {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 25px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .star-badge {
+      background: rgba(255,255,255,0.95);
+      color: #667eea;
+      padding: 15px 30px;
+      border-radius: 15px;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .star-badge .icon {
+      font-size: 24px;
+    }
+
+    .content {
+      padding: 50px 40px;
+      background: white;
+    }
+
+    .content p {
+      margin-bottom: 20px;
+      font-size: 17px;
+      line-height: 2;
+      color: #34495e;
+    }
+
+    .content h2 {
+      font-size: 28px;
+      color: #667eea;
+      margin: 40px 0 25px 0;
+      padding-bottom: 15px;
+      border-bottom: 3px solid #667eea;
+      font-weight: 600;
+    }
+
+    .content h3 {
+      font-size: 24px;
+      color: #764ba2;
+      margin: 35px 0 20px 0;
+      font-weight: 600;
+    }
+
+    .content strong {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+
+    .photos-section {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 40px;
+      margin: 0;
+    }
+
+    .photos-section h3 {
+      text-align: center;
+      font-size: 26px;
+      color: #667eea;
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+
+    .photo-item {
+      background: white;
+      padding: 15px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      margin-bottom: 25px;
+      transition: transform 0.3s ease;
+    }
+
+    .photo-item:hover {
+      transform: translateY(-5px);
+    }
+
+    .photo-item img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      display: block;
+    }
+
+    .photo-caption {
+      text-align: center;
+      color: #7f8c8d;
+      font-size: 15px;
+      margin-top: 12px;
+      font-style: italic;
+    }
+
+    .footer {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+      font-size: 16px;
+    }
+
+    .footer p {
+      margin: 8px 0;
+      opacity: 0.95;
+    }
+
+    .footer-emoji {
+      font-size: 24px;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 0;
+        background: #f5f7fa;
+      }
+
+      .progress-bar {
+        height: 3px;
+      }
+
+      .back-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+      }
+
+      .back-to-home {
+        top: 15px;
+        left: 15px;
+        padding: 10px 18px;
+        font-size: 14px;
+      }
+
+      .back-to-home .icon {
+        font-size: 16px;
+      }
+
+      .container {
+        border-radius: 0;
+        box-shadow: none;
+        max-width: 100%;
+      }
+
+      .header {
+        padding: 35px 20px 30px 20px;
+      }
+
+      .team-logo {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+      }
+
+      .header::before {
+        font-size: 80px;
+        top: -15px;
+        right: -15px;
+      }
+
+      .header h1 {
+        font-size: 22px;
+        line-height: 1.5;
+        margin-bottom: 18px;
+        padding: 0 10px;
+      }
+
+      .info-box {
+        gap: 8px 10px;
+        margin-top: 18px;
+      }
+
+      .info-item {
+        font-size: 13px;
+        padding: 7px 13px;
+        border-radius: 20px;
+      }
+
+      .star-section {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .star-badge {
+        font-size: 14px;
+        padding: 10px 18px;
+        border-radius: 20px;
+      }
+
+      .star-badge .icon {
+        font-size: 18px;
+      }
+
+      .content {
+        padding: 30px 20px 30px 20px;
+      }
+
+      .content p {
+        font-size: 16px;
+        line-height: 2;
+        margin-bottom: 20px;
+        text-align: justify;
+        word-break: break-word;
+        overflow-wrap: break-word;
+      }
+
+      .content h2 {
+        font-size: 21px;
+        margin: 35px 0 18px 0;
+        padding-bottom: 10px;
+        border-bottom-width: 2px;
+        letter-spacing: 0.5px;
+      }
+
+      .content h3 {
+        font-size: 19px;
+        margin: 28px 0 16px 0;
+        letter-spacing: 0.3px;
+      }
+
+      .content strong {
+        font-size: 16px;
+        letter-spacing: 0.2px;
+      }
+
+      .photos-section {
+        padding: 30px 18px 35px 18px;
+      }
+
+      .photos-section h3 {
+        font-size: 21px;
+        margin-bottom: 22px;
+        letter-spacing: 0.5px;
+      }
+
+      .photo-item {
+        padding: 10px;
+        margin-bottom: 18px;
+        border-radius: 12px;
+      }
+
+      .photo-item img {
+        border-radius: 8px;
+      }
+
+      .photo-caption {
+        font-size: 14px;
+        margin-top: 10px;
+        line-height: 1.6;
+      }
+
+      .footer {
+        padding: 35px 20px;
+        font-size: 15px;
+      }
+
+      .footer p {
+        line-height: 1.8;
+      }
+
+      .footer-emoji {
+        font-size: 22px;
+        margin-top: 15px;
+        letter-spacing: 3px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header {
+        padding: 30px 18px 25px 18px;
+      }
+
+      .team-logo {
+        width: 90px;
+        height: 90px;
+        margin-bottom: 18px;
+      }
+
+      .header h1 {
+        font-size: 20px;
+        padding: 0 5px;
+      }
+
+      .info-box {
+        gap: 7px 8px;
+      }
+
+      .info-item {
+        font-size: 12px;
+        padding: 6px 12px;
+      }
+
+      .star-badge {
+        font-size: 13px;
+        padding: 9px 15px;
+      }
+
+      .content {
+        padding: 25px 18px 30px 18px;
+      }
+
+      .content p {
+        font-size: 15px;
+        line-height: 2;
+        margin-bottom: 18px;
+      }
+
+      .content h2 {
+        font-size: 19px;
+        margin: 30px 0 15px 0;
+      }
+
+      .content h3 {
+        font-size: 17px;
+        margin: 25px 0 14px 0;
+      }
+
+      .content strong {
+        font-size: 15px;
+      }
+
+      .photos-section {
+        padding: 25px 15px 30px 15px;
+      }
+
+      .photos-section h3 {
+        font-size: 19px;
+        margin-bottom: 18px;
+      }
+
+      .photo-item {
+        padding: 8px;
+        margin-bottom: 15px;
+      }
+
+      .footer {
+        padding: 30px 18px;
+        font-size: 14px;
+      }
+
+      .footer-emoji {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 阅读进度条 -->
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- 返回首页按钮 -->
+  <a href="matches.html" class="back-to-home" title="返回首页">
+    <span class="icon">←</span>
+    <span>首页</span>
+  </a>
+
+  <!-- 返回顶部按钮 -->
+  <button class="back-to-top" id="backToTop" title="返回顶部">↑</button>
+
+  <div class="container">
+    <div class="header">
+      <div class="team-logo">
+        <img src="../logo.png" alt="河伯FC Logo">
+      </div>
+      <h1>元旦假期福沁大对决,知己20-26憾负党校队</h1>
+      <div class="info-box">
+        <div class="info-item">📅 2026-01-03</div>
+        <div class="info-item">⚔️ 党校队</div>
+        <div class="info-item" style="font-size: 18px;">20-26</div>
+        <div class="info-item">📍 福沁球场</div>
+      </div>
+      
+      <div class="star-section">
+        <div class="star-badge"><span class="icon">⭐</span><span>MVP: <strong>高主席</strong></span></div>
+      </div>
+      
+    </div>
+
+    <div class="content">
+      <p style="line-height: 1.8; margin: 10px 0;"><br>元旦假期福沁大对决,知己VS党校,两队精锐尽出,展开一场跌宕起伏的友好交流赛。</p><p style="line-height: 1.8; margin: 10px 0;"><h2>比赛背景</h2></p><p style="line-height: 1.8; margin: 10px 0;">党校队坐拥前国脚黄德杰坐镇中场,实力强劲,开局不久便取得领先。知己队不甘示弱,高主席挺身而出连下三城,党校黄德杰不甘示弱同样上演帽子戏法,两队比分交替上升,战况异常激烈。</p><p style="line-height: 1.8; margin: 10px 0;"><h2>上半场</h2></p><p style="line-height: 1.8; margin: 10px 0;">双方你来我往,进攻如水银泻地。党校队凭借黄德杰9粒进球的惊艳表现,半场取得领先优势。知己队高主席状态神勇,独中7元,成为球队进攻核心。</p><p style="line-height: 1.8; margin: 10px 0;"><h2>下半场风云</h2></p><p style="line-height: 1.8; margin: 10px 0;">下半场知己队调整战术,多点开花:</p><p style="line-height: 1.8; margin: 10px 0;">- <strong>王书记</strong>: 上演帽子戏法,打入3球<br>- <strong>公正</strong>: 发挥出色,连入3球<br>- <strong>叶兄</strong>: 表现抢眼,贡献3球</p><p style="line-height: 1.8; margin: 10px 0;">党校队稳扎稳打,始终保持领先优势。最终比分定格在<strong>20-26</strong>,党校队获胜。</p><p style="line-height: 1.8; margin: 10px 0;"><h2>本场之星</h2></p><p style="line-height: 1.8; margin: 10px 0;"><strong>MVP: 高主席</strong> - 独进7球,展现出色的得分能力和领袖气质,虽球队告负但个人表现无可挑剔。</p><p style="line-height: 1.8; margin: 10px 0;"><h2>赛后总结</h2></p><p style="line-height: 1.8; margin: 10px 0;">这是一场精彩纷呈的友谊赛,两队球员展现出高超的球技和顽强的拼搏精神。比分虽落后,但知己队众球星斗志昂扬,打出了精气神,展现了球队团结向上的风貌。</p><p style="line-height: 1.8; margin: 10px 0;">元旦假期,以球会友,强身健体,不亦乐乎!</p><p style="line-height: 1.8; margin: 10px 0;">---</p><p style="line-height: 1.8; margin: 10px 0;"><strong>莫愁前路无知己,长风破浪会有时!</strong><br></p>
+    </div>
+
+    
+
+
+    <div class="footer">
+      <p>— 感谢阅读 —</p>
+      <p>知己足球俱乐部 · 每周末与你相约</p>
+      <div class="footer-emoji">⚽ 💪 🎉</div>
+    </div>
+  </div>
+
+  <script>
+    // 阅读进度条
+    function updateProgressBar() {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = (scrollTop / scrollHeight) * 100;
+      document.getElementById('progressBar').style.width = progress + '%';
+    }
+
+    // 返回顶部按钮
+    const backToTopButton = document.getElementById('backToTop');
+
+    function toggleBackToTopButton() {
+      if (window.scrollY > 300) {
+        backToTopButton.classList.add('show');
+      } else {
+        backToTopButton.classList.remove('show');
+      }
+    }
+
+    backToTopButton.addEventListener('click', function() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+
+    // 监听滚动事件
+    window.addEventListener('scroll', function() {
+      updateProgressBar();
+      toggleBackToTopButton();
+    });
+
+    // 初始化
+    updateProgressBar();
+  </script>
+</body>
+</html>
+  

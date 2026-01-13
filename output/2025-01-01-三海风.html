@@ -1,0 +1,334 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新年激战!知己VS三海风4-4战平</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      line-height: 1.8;
+      color: #2c3e50;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 0;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 40px 40px 50px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .team-logo {
+      width: 180px;
+      height: 180px;
+      margin: 0 auto 40px auto;
+      border-radius: 50%;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .team-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .header::before {
+      content: '⚽';
+      position: absolute;
+      font-size: 150px;
+      opacity: 0.1;
+      top: -30px;
+      right: -30px;
+      transform: rotate(15deg);
+    }
+
+    .header h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      position: relative;
+      z-index: 1;
+    }
+
+    .info-box {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 25px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .info-item {
+      background: rgba(255,255,255,0.25);
+      backdrop-filter: blur(10px);
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-size: 15px;
+      font-weight: 500;
+      border: 1px solid rgba(255,255,255,0.3);
+      transition: all 0.3s ease;
+    }
+
+    .info-item:hover {
+      background: rgba(255,255,255,0.35);
+      transform: translateY(-2px);
+    }
+
+    .star-section {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 25px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .star-badge {
+      background: rgba(255,255,255,0.95);
+      color: #667eea;
+      padding: 15px 30px;
+      border-radius: 15px;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .star-badge .icon {
+      font-size: 24px;
+    }
+
+    .content {
+      padding: 50px 40px;
+      background: white;
+    }
+
+    .content p {
+      margin-bottom: 20px;
+      font-size: 17px;
+      line-height: 2;
+      color: #34495e;
+    }
+
+    .content h2 {
+      font-size: 28px;
+      color: #667eea;
+      margin: 40px 0 25px 0;
+      padding-bottom: 15px;
+      border-bottom: 3px solid #667eea;
+      font-weight: 600;
+    }
+
+    .content h3 {
+      font-size: 24px;
+      color: #764ba2;
+      margin: 35px 0 20px 0;
+      font-weight: 600;
+    }
+
+    .content strong {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+
+    .photos-section {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 40px;
+      margin: 0;
+    }
+
+    .photos-section h3 {
+      text-align: center;
+      font-size: 26px;
+      color: #667eea;
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+
+    .photo-item {
+      background: white;
+      padding: 15px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      margin-bottom: 25px;
+      transition: transform 0.3s ease;
+    }
+
+    .photo-item:hover {
+      transform: translateY(-5px);
+    }
+
+    .photo-item img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      display: block;
+    }
+
+    .photo-caption {
+      text-align: center;
+      color: #7f8c8d;
+      font-size: 15px;
+      margin-top: 12px;
+      font-style: italic;
+    }
+
+    .attendance-list {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      padding: 40px;
+      margin: 0;
+    }
+
+    .attendance-list h3 {
+      text-align: center;
+      font-size: 26px;
+      color: #2c3e50;
+      margin-bottom: 25px;
+      font-weight: 600;
+    }
+
+    .attendance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .attendance-item {
+      background: white;
+      padding: 12px 18px;
+      border-radius: 25px;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 500;
+      color: #2c3e50;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+
+    .attendance-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    }
+
+    .footer {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+      font-size: 16px;
+    }
+
+    .footer p {
+      margin: 8px 0;
+      opacity: 0.95;
+    }
+
+    .footer-emoji {
+      font-size: 24px;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 10px;
+      }
+
+      .header {
+        padding: 40px 20px;
+      }
+
+      .header h1 {
+        font-size: 28px;
+      }
+
+      .star-section {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .content {
+        padding: 30px 20px;
+      }
+
+      .content h2 {
+        font-size: 24px;
+      }
+
+      .photos-section,
+      .attendance-list {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="team-logo">
+        <img src="file:///C:/Users/segas/Desktop/河伯战报/logo.png" alt="河伯FC Logo">
+      </div>
+      <h1>新年激战!知己VS三海风4-4战平</h1>
+      <div class="info-box">
+        <div class="info-item">📅 2025-01-01</div>
+        <div class="info-item">⚔️ 三海风</div>
+        <div class="info-item" style="font-size: 18px;">4-4</div>
+        <div class="info-item">📍 江夏学院</div>
+      </div>
+      
+      <div class="star-section">
+        <div class="star-badge"><span class="icon">⭐</span><span>MVP: <strong>小王</strong></span></div>
+      </div>
+      
+    </div>
+
+    <div class="content">
+      <p style="line-height: 1.8; margin: 10px 0;"><br>新元擎起，万象更新，高主席亲自部署亲自参加元旦杯传统赛事，元月一日上午，三海风VS知己，两队集结江夏学院共赴新程。</p><p style="line-height: 1.8; margin: 10px 0;"><h2>上半场</h2></p><p style="line-height: 1.8; margin: 10px 0;">随着主裁一声哨响，上半场比赛正式打响，三海风率先进入状态，多次边路进攻制造威胁，知己队疲于应付，球星们位置感欠佳。</p><p style="line-height: 1.8; margin: 10px 0;">- <strong>第10分钟</strong>: 三海风先拔头筹，后场起高球直接绕过知己防线，三海前锋单刀破门<strong>1-0</strong><br>- <strong>第15分钟</strong>: 知己队出现最好机会，小叶前场拦截横传，小青蛙门前无人防守近距离射门遗憾偏出<br>- <strong>第23分钟</strong>: 三海风角球发前点，弹地后意外钻入网窝<strong>2-0</strong><br>- <strong>第35分钟</strong>: 三海风右路传中再入一球</p><p style="line-height: 1.8; margin: 10px 0;">知己队上半场阵容不整，前后脱节，场面较为被动大比分落后。</p><p style="line-height: 1.8; margin: 10px 0;"><h2>下半场反击</h2></p><p style="line-height: 1.8; margin: 10px 0;">下半场随着球星陆续到场，知己队轮换阵容：张航搭档德国小弟稳固后场，小王联手V色、王书记组织攻防。</p><p style="line-height: 1.8; margin: 10px 0;">下半场开始，知己队就制造威胁：V色中场分边，叉弟直塞，金日卢右路高速前插射门被扑出；张航、小王前场连续成功拦截，在对方半场形成围攻态势。</p><p style="line-height: 1.8; margin: 10px 0;">- <strong>第50分钟</strong>: 小王高球横传，小青蛙射门再度被扑出<br>- <strong>第60分钟</strong>: 三海风也获得机会，左路突破射门，被知己守门潘书记神勇没收</p><p style="line-height: 1.8; margin: 10px 0;"><h2>知己队的反击</h2></p><p style="line-height: 1.8; margin: 10px 0;"><strong>第65分钟</strong>: 知己队简洁的防守反击破门！小王后场左边路断球，一脚漂亮的外脚背直塞，小青蛙心领神会，快速插上拿球形成单刀，突入禁区抹过后卫后小角度射进球门<strong>1-3</strong>。</p><p style="line-height: 1.8; margin: 10px 0;">进球后知己队依旧牢牢控制场上优势，但没能扩大比分，反因后场失误再丢一球<strong>1-4</strong>。</p><p style="line-height: 1.8; margin: 10px 0;"><h2>小王的MVP时刻</h2></p><p style="line-height: 1.8; margin: 10px 0;">关键时刻，知己队大腿小王挺身而出，一己之力改变战局！</p><p style="line-height: 1.8; margin: 10px 0;">- <strong>第70分钟</strong>: 小王在前场预判对手传球，漂亮拦截后杀入禁区，左脚推射命中右下死角<strong>2-4</strong><br>- <strong>第75分钟</strong>: 知己队打出经典反击，叉弟右路接球后快速摆脱防守，高速突破至对方禁区前沿后分球，小青蛙右路插上冷静挑射破门<strong>3-4</strong></p><p style="line-height: 1.8; margin: 10px 0;">小青蛙继上周帽子戏法后本周又梅开二度，射术在线状态全红，满阶香雪落梨花，锋线杀手小青蛙！</p><p style="line-height: 1.8; margin: 10px 0;">- <strong>第80分钟</strong>: 知己队右路大脚转移到左路，辉哥拿球送出助攻，小叶禁区左肋远射打进球门，知己队将比分追至<strong>4-4</strong></p><p style="line-height: 1.8; margin: 10px 0;">最终两队各踢出半场好球，不分上下握手言和。</p><p style="line-height: 1.8; margin: 10px 0;"><h2>赛后合影</h2></p><p style="line-height: 1.8; margin: 10px 0;">冻云初散晓光新，东风已度第一辰，值此良辰美景，众球星打卡拍照合影留念。</p><p style="line-height: 1.8; margin: 10px 0;"><h2>加时赛</h2></p><p style="line-height: 1.8; margin: 10px 0;">随后两队部分球星意犹未尽继续加钟，弃明投暗的三海风前锋高主席，成为比赛的焦点：</p><p style="line-height: 1.8; margin: 10px 0;">- 三海风角球机会，知己禁区一片混乱，高主席禁区中路迎球一脚怒射，皮球直接串入网窝，<strong>江夏再现天外飞仙，云中落雁全场沸腾</strong><br>- 知己队快速做出反应，张航右路发起进攻，米卢传中助攻队友扳平<br>- 比赛尾声三海风利用远射再入一球，<strong>2-1</strong>结束赛事</p><p style="line-height: 1.8; margin: 10px 0;"><h2>本场之星</h2></p><p style="line-height: 1.8; margin: 10px 0;"><strong>MVP: 小王</strong> - 下半场登场后诠释核心作用，空天一体攻防兼备，进球助攻样样精通，醉卧沙场君莫笑，以此长枪定乾坤。</p><p style="line-height: 1.8; margin: 10px 0;">赛后球星们整装待发，奔赴山海晚宴。</p><p style="line-height: 1.8; margin: 10px 0;">---</p><p style="line-height: 1.8; margin: 10px 0;"><h2>致敬青春</h2></p><p style="line-height: 1.8; margin: 10px 0;">江滨绿茵载笑，犹记并辔逐流星；十载风雨晴晦，当时杯酒皆豪英；回头相望自己，尽是年少疏轻狂。</p><p style="line-height: 1.8; margin: 10px 0;"><strong>2025年，江滨球场落下帷幕，成为球队最大遗憾。十年相伴知己成长，致敬我们终将逝去的青春，不负我们坚持奔跑的梦想，迎接我们必会丰盈的年华。</strong></p><p style="line-height: 1.8; margin: 10px 0;">山海寻梦，不觉其远；前路迢迢，阔步而行，新的一年在高主席带领下，<strong>莫愁前路无知己，长风破浪会有时</strong>，球星们万事可期，元旦快乐。<br></p>
+    </div>
+
+    
+
+    
+
+    <div class="footer">
+      <p>— 感谢阅读 —</p>
+      <p>知己足球俱乐部 · 每周末与你相约</p>
+      <div class="footer-emoji">⚽ 💪 🎉</div>
+    </div>
+  </div>
+</body>
+</html>
+  
