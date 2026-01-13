@@ -615,6 +615,27 @@ function main() {
     fs.writeFileSync(outputFile, html, 'utf-8');
     console.log(`\n✅ 页面已生成: ${outputFile}`);
 
+    // 同时生成index.html作为重定向页面
+    const indexFile = path.join(__dirname, '..', 'output', 'index.html');
+    const indexHTML = `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="refresh" content="0; url=matches.html">
+  <title>知己足球俱乐部</title>
+  <script>
+    window.location.href = 'matches.html';
+  </script>
+</head>
+<body>
+  <p style="text-align: center; padding: 50px; font-family: Arial, sans-serif;">
+    正在跳转到战报页面...
+  </p>
+</body>
+</html>`;
+    fs.writeFileSync(indexFile, indexHTML, 'utf-8');
+    console.log(`✅ 索引页面已生成: ${indexFile}`);
+
     // 在浏览器中打开
     const filePath = path.resolve(outputFile);
     console.log(`\n🌐 正在打开浏览器...`);

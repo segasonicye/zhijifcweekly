@@ -1,4 +1,80 @@
-<!DOCTYPE html>
+#!/usr/bin/env node
+
+/**
+ * 生成现代化战报回看页面
+ * 采用最新的设计趋势: 玻璃态、渐变、动画
+ */
+
+const fs = require('fs');
+const path = require('path');
+const matter = require('gray-matter');
+
+/**
+ * 读取所有比赛
+ */
+function readMatches() {
+  const matchesDir = path.join(__dirname, '..', 'matches');
+  if (!fs.existsSync(matchesDir)) {
+    return [];
+  }
+
+  const files = fs.readdirSync(matchesDir)
+    .filter(file => file.endsWith('.md'))
+    .sort()
+    .reverse();
+
+  return files.map(file => {
+    const filePath = path.join(matchesDir, file);
+    const content = fs.readFileSync(filePath, 'utf-8');
+    const { data, content: body } = matter(content);
+
+    const cleanBody = body.replace(/[#*`\-\n]/g, ' ').replace(/\s+/g, ' ').trim();
+    const summary = cleanBody.substring(0, 80) + '...';
+    const previewFile = file.replace('.md', '.html');
+    const previewPath = path.join(__dirname, '..', 'output', previewFile);
+
+    return {
+      file,
+      previewPath,
+      ...data,
+      summary,
+      body: body.substring(0, 500)
+    };
+  });
+}
+
+/**
+ * 计算MVP统计
+ */
+function calculateMVPStats(matches) {
+  const mvpStats = {};
+
+  matches.forEach(match => {
+    if (match.mvp) {
+      if (!mvpStats[match.mvp]) {
+        mvpStats[match.mvp] = {
+          name: match.mvp,
+          count: 0,
+          matches: []
+        };
+      }
+      mvpStats[match.mvp].count++;
+      mvpStats[match.mvp].matches.push({
+        date: match.date,
+        opponent: match.opponent,
+        score: match.score
+      });
+    }
+  });
+
+  return Object.values(mvpStats).sort((a, b) => b.count - a.count);
+}
+
+/**
+ * 生成现代化HTML页面
+ */
+function generateHTML(matches, mvpStats) {
+  const html = `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -557,11 +633,11 @@
 
       <div class="stats-grid">
         <a href="#matches" class="stat-card">
-          <div class="number">3</div>
+          <div class="number">${matches.length}</div>
           <div class="label">总比赛场次</div>
         </a>
         <a href="#mvp" class="stat-card">
-          <div class="number">3</div>
+          <div class="number">${mvpStats.length}</div>
           <div class="label">MVP球员</div>
         </a>
       </div>
@@ -570,102 +646,123 @@
     <!-- 战报列表 -->
     <div id="matches" class="matches-section">
       <div class="section-title">📝 战报回看</div>
-      
+      ${matches.map(match => `
         <div class="match-card">
           <div class="match-header">
-            <div class="match-title">冬日激战!知己足球俱乐部内战精彩纷呈</div>
+            <div class="match-title">${match.title || match.date}</div>
             <div class="match-meta">
-              <span class="meta-item">📅 2026-01-09</span>
-              <span class="meta-item">⚔️ 内战</span>
-              <span class="meta-item">多场对抗</span>
-              <span class="meta-item mvp">⭐ 喜力授</span>
+              <span class="meta-item">📅 ${match.date}</span>
+              <span class="meta-item">⚔️ ${match.opponent}</span>
+              <span class="meta-item">${match.score}</span>
+              ${match.mvp ? `<span class="meta-item mvp">⭐ ${match.mvp}</span>` : ''}
             </div>
           </div>
-          <div class="match-summary">冬日不虚度，晴光忽满帘，周六上午知己队再战福沁球场。 首发阵容 蓝队 : 辉哥、托蒂、王书记、喜力授、叶伯海、德国小弟 红队 : 张航、小王、东哥、叶老师、高主...</div>
-          <a href="2026-01-09-内战.html" class="read-more">
+          <div class="match-summary">${match.summary}</div>
+          <a href="${match.file.replace('.md', '.html')}" class="read-more">
             阅读全文
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
           </a>
         </div>
-      
-        <div class="match-card">
-          <div class="match-header">
-            <div class="match-title">元旦假期福沁大对决,知己20-26憾负党校队</div>
-            <div class="match-meta">
-              <span class="meta-item">📅 2026-01-03</span>
-              <span class="meta-item">⚔️ 党校队</span>
-              <span class="meta-item">20-26</span>
-              <span class="meta-item mvp">⭐ 高主席</span>
-            </div>
-          </div>
-          <div class="match-summary">元旦假期福沁大对决,知己VS党校,两队精锐尽出,展开一场跌宕起伏的友好交流赛。 比赛背景 党校队坐拥前国脚黄德杰坐镇中场,实力强劲,开局不久便取得领先。知己队不...</div>
-          <a href="2026-01-03-党校队.html" class="read-more">
-            阅读全文
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </a>
-        </div>
-      
-        <div class="match-card">
-          <div class="match-header">
-            <div class="match-title">新年激战!知己VS三海风4-4战平</div>
-            <div class="match-meta">
-              <span class="meta-item">📅 2026-01-01</span>
-              <span class="meta-item">⚔️ 三海风</span>
-              <span class="meta-item">4-4</span>
-              <span class="meta-item mvp">⭐ 小王</span>
-            </div>
-          </div>
-          <div class="match-summary">新元擎起，万象更新，高主席亲自部署亲自参加元旦杯传统赛事，元月一日上午，三海风VS知己，两队集结江夏学院共赴新程。 上半场 随着主裁一声哨响，上半场比赛正式打响...</div>
-          <a href="2026-01-01-三海风.html" class="read-more">
-            阅读全文
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </a>
-        </div>
-      
+      `).join('')}
     </div>
 
     <!-- MVP排行榜 -->
-    
+    ${mvpStats.length > 0 ? `
     <div id="mvp" class="mvp-section">
       <div class="section-title">⭐ MVP 榜单</div>
       <div class="mvp-grid">
-        
+        ${mvpStats.map((mvp, index) => `
           <div class="mvp-card">
-            <div class="mvp-name">🥇 喜力授</div>
-            <div class="mvp-count">1</div>
+            <div class="mvp-name">${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅'} ${mvp.name}</div>
+            <div class="mvp-count">${mvp.count}</div>
             <div class="mvp-matches">
               获奖比赛:<br>
-              • 2026-01-09 内战
+              ${mvp.matches.map(m => `• ${m.date} ${m.opponent}`).join('<br>')}
             </div>
           </div>
-        
-          <div class="mvp-card">
-            <div class="mvp-name">🥈 高主席</div>
-            <div class="mvp-count">1</div>
-            <div class="mvp-matches">
-              获奖比赛:<br>
-              • 2026-01-03 党校队
-            </div>
-          </div>
-        
-          <div class="mvp-card">
-            <div class="mvp-name">🥉 小王</div>
-            <div class="mvp-count">1</div>
-            <div class="mvp-matches">
-              获奖比赛:<br>
-              • 2026-01-01 三海风
-            </div>
-          </div>
-        
+        `).join('')}
       </div>
     </div>
-    
+    ` : ''}
   </div>
 </body>
-</html>
+</html>`;
+
+  return html;
+}
+
+/**
+ * 主函数
+ */
+function main() {
+  console.log('\n=== 生成现代化战报页面 ===\n');
+
+  try {
+    const matches = readMatches();
+    console.log(`✅ 找到 ${matches.length} 场比赛`);
+
+    const mvpStats = calculateMVPStats(matches);
+    console.log(`✅ 统计到 ${mvpStats.length} 位MVP`);
+
+    const html = generateHTML(matches, mvpStats);
+
+    // 保存文件
+    const outputFile = path.join(__dirname, '..', 'output', 'matches.html');
+    const outputDir = path.dirname(outputFile);
+
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+
+    fs.writeFileSync(outputFile, html, 'utf-8');
+    console.log(`\n✅ 页面已生成: ${outputFile}`);
+
+    // 生成index.html
+    const indexFile = path.join(__dirname, '..', 'output', 'index.html');
+    const indexHTML = `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="refresh" content="0; url=matches.html">
+  <title>知己足球俱乐部</title>
+  <script>
+    window.location.href = 'matches.html';
+  </script>
+</head>
+<body>
+  <p style="text-align: center; padding: 50px; font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">
+    正在跳转到战报页面...
+  </p>
+</body>
+</html>`;
+    fs.writeFileSync(indexFile, indexHTML, 'utf-8');
+    console.log(`✅ 索引页面已生成: ${indexFile}`);
+
+    // 在浏览器中打开
+    const filePath = path.resolve(outputFile);
+    console.log(`\n🌐 正在打开浏览器...`);
+
+    const { execSync } = require('child_process');
+    try {
+      if (process.platform === 'win32') {
+        execSync(`start "" "${filePath}"`);
+      } else if (process.platform === 'darwin') {
+        execSync(`open "${filePath}"`);
+      } else {
+        execSync(`xdg-open "${filePath}"`);
+      }
+    } catch (error) {
+      console.log(`\n💡 请在浏览器中打开: file://${filePath}`);
+    }
+
+    console.log('\n✨ 完成!\n');
+
+  } catch (error) {
+    console.error('❌ 错误:', error.message);
+    process.exit(1);
+  }
+}
+
+main();

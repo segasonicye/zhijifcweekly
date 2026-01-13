@@ -154,11 +154,22 @@ async function main() {
     // 创建文件
     await createMatchReport(filename, content);
 
+    // 创建照片文件夹
+    const photosDir = path.join(__dirname, '..', 'photos', date);
+    if (!fs.existsSync(photosDir)) {
+      fs.mkdirSync(photosDir, { recursive: true });
+      console.log(`📸 照片文件夹已创建: photos/${date}/`);
+      console.log(`💡 请将照片放入该文件夹，然后运行: npm run add-photos\n`);
+    } else {
+      console.log(`📸 照片文件夹已存在: photos/${date}/\n`);
+    }
+
     console.log('💡 下一步操作:');
-    console.log('   1. 编辑战报内容');
-    console.log('   2. 添加照片: npm run photos');
-    console.log('   3. 查看统计: npm run stats');
-    console.log('   4. 发布公众号: npm run sync\n');
+    console.log('   1. 将照片放入 photos/' + date + '/ 文件夹');
+    console.log('   2. 编辑战报内容');
+    console.log('   3. 添加照片: npm run add-photos');
+    console.log('   4. 生成HTML: npm run matches');
+    console.log('   5. 查看统计: npm run stats\n');
 
   } catch (error) {
     console.error('❌ 发生错误:', error.message);
