@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+
+# Output files
+output/
+
+# Temporary files
+*.tmp
+*.temp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+npm-debug.log
+yarn-error.log
+
+# Environment variables
+.env
+.env.local
+
+# Photo temp folder (optional)
+# Uncomment if you don't want to track raw photos
+# photos/raw/
+
+# Local Netlify folder
+.netlify
+
+# Windows reserved names
+nul

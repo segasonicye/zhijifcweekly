@@ -1,0 +1,32 @@
+{
+  "name": "hebo-match-reports",
+  "version": "1.0.0",
+  "description": "河伯FC足球队战报管理系统",
+  "main": "index.js",
+  "scripts": {
+    "new": "node scripts/new-post.js",
+    "parse": "node scripts/parse-report.js",
+    "photos": "node scripts/organize-photos.js",
+    "add-photos": "node scripts/add-photos.js",
+    "stats": "node scripts/generate-stats.js",
+    "preview": "node scripts/preview.js",
+    "matches": "node scripts/matches-view.js",
+    "sync": "node scripts/sync-wechat.js",
+    "deploy-drop": "node scripts/deploy-drop.js",
+    "setup-netlify": "node scripts/setup-netlify.js",
+    "deploy": "node scripts/deploy.js"
+  },
+  "keywords": [
+    "football",
+    "match-report",
+    "wechat"
+  ],
+  "author": "河伯FC",
+  "license": "MIT",
+  "dependencies": {
+    "gray-matter": "^4.0.3"
+  },
+  "devDependencies": {
+    "netlify-cli": "^23.13.3"
+  }
+}

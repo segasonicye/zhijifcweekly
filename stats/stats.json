@@ -1,0 +1,138 @@
+{
+  "stats": {
+    "attendance": {
+      "辉哥": 1,
+      "托蒂": 1,
+      "王书记": 1,
+      "喜力授": 1,
+      "叶伯海": 1,
+      "德国小弟": 1,
+      "张航": 1,
+      "小王": 1,
+      "东哥": 1,
+      "叶老师": 1,
+      "高主席": 1,
+      "潘书记": 1,
+      "超仕": 1,
+      "小卢": 1,
+      "公正": 1,
+      "陈韬": 1,
+      "大鼻涕": 1
+    },
+    "mvp": {
+      "喜力授": 1,
+      "高主席": 1,
+      "小王": 1
+    },
+    "totalMatches": 3,
+    "matches": [
+      {
+        "date": "2026-01-09",
+        "opponent": "内战",
+        "score": "多场对抗",
+        "location": "福沁球场",
+        "mvp": "喜力授"
+      },
+      {
+        "date": "2026-01-03",
+        "opponent": "党校队",
+        "score": "20-26",
+        "location": "福沁球场",
+        "mvp": "高主席"
+      },
+      {
+        "date": "2026-01-01",
+        "opponent": "三海风",
+        "score": "4-4",
+        "location": "江夏学院",
+        "mvp": "小王"
+      }
+    ]
+  },
+  "rankings": {
+    "attendance": [
+      {
+        "player": "辉哥",
+        "count": 1
+      },
+      {
+        "player": "托蒂",
+        "count": 1
+      },
+      {
+        "player": "王书记",
+        "count": 1
+      },
+      {
+        "player": "喜力授",
+        "count": 1
+      },
+      {
+        "player": "叶伯海",
+        "count": 1
+      },
+      {
+        "player": "德国小弟",
+        "count": 1
+      },
+      {
+        "player": "张航",
+        "count": 1
+      },
+      {
+        "player": "小王",
+        "count": 1
+      },
+      {
+        "player": "东哥",
+        "count": 1
+      },
+      {
+        "player": "叶老师",
+        "count": 1
+      },
+      {
+        "player": "高主席",
+        "count": 1
+      },
+      {
+        "player": "潘书记",
+        "count": 1
+      },
+      {
+        "player": "超仕",
+        "count": 1
+      },
+      {
+        "player": "小卢",
+        "count": 1
+      },
+      {
+        "player": "公正",
+        "count": 1
+      },
+      {
+        "player": "陈韬",
+        "count": 1
+      },
+      {
+        "player": "大鼻涕",
+        "count": 1
+      }
+    ],
+    "mvp": [
+      {
+        "player": "喜力授",
+        "count": 1
+      },
+      {
+        "player": "高主席",
+        "count": 1
+      },
+      {
+        "player": "小王",
+        "count": 1
+      }
+    ]
+  }
+}
