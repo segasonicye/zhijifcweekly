@@ -307,6 +307,9 @@ function generateHTML(matches, mvpStats) {
 
     /* 战报卡片 - 现代设计 */
     .match-card {
+      text-decoration: none;
+      color: inherit;
+      display: block;
       background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
       padding: 35px;
       border-radius: 25px;
@@ -392,23 +395,23 @@ function generateHTML(matches, mvpStats) {
       color: var(--text-secondary);
       line-height: 1.8;
       font-size: 16px;
-      margin-bottom: 18px;
+      margin-bottom: 0;
     }
 
-    .read-more {
-      color: #667eea;
-      font-weight: 700;
-      text-decoration: none;
+    .match-card-hint {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      font-size: 16px;
-      transition: all 0.3s ease;
+      gap: 6px;
+      color: #667eea;
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 12px;
+      opacity: 0.8;
+      transition: opacity 0.3s ease;
     }
 
-    .read-more:hover {
-      color: #f093fb;
-      transform: translateX(5px);
+    .match-card:hover .match-card-hint {
+      opacity: 1;
     }
 
     /* MVP榜单 */
@@ -647,7 +650,7 @@ function generateHTML(matches, mvpStats) {
     <div id="matches" class="matches-section">
       <div class="section-title">📝 战报回看</div>
       ${matches.map(match => `
-        <div class="match-card">
+        <a href="${match.file.replace('.md', '.html')}" class="match-card">
           <div class="match-header">
             <div class="match-title">${match.title || match.date}</div>
             <div class="match-meta">
@@ -658,13 +661,13 @@ function generateHTML(matches, mvpStats) {
             </div>
           </div>
           <div class="match-summary">${match.summary}</div>
-          <a href="${match.file.replace('.md', '.html')}" class="read-more">
-            阅读全文
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <div class="match-card-hint">
+            点击查看详情
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
-          </a>
-        </div>
+          </div>
+        </a>
       `).join('')}
     </div>
 

@@ -35,7 +35,8 @@
       "Bash(git branch:*)",
       "Bash(git push:*)",
       "Bash(copy:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(ping:*)"
     ],
     "deny": [],
     "ask": []

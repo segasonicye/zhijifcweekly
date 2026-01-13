@@ -231,6 +231,9 @@
 
     /* 战报卡片 - 现代设计 */
     .match-card {
+      text-decoration: none;
+      color: inherit;
+      display: block;
       background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
       padding: 35px;
       border-radius: 25px;
@@ -316,23 +319,23 @@
       color: var(--text-secondary);
       line-height: 1.8;
       font-size: 16px;
-      margin-bottom: 18px;
+      margin-bottom: 0;
     }
 
-    .read-more {
-      color: #667eea;
-      font-weight: 700;
-      text-decoration: none;
+    .match-card-hint {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      font-size: 16px;
-      transition: all 0.3s ease;
+      gap: 6px;
+      color: #667eea;
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 12px;
+      opacity: 0.8;
+      transition: opacity 0.3s ease;
     }
 
-    .read-more:hover {
-      color: #f093fb;
-      transform: translateX(5px);
+    .match-card:hover .match-card-hint {
+      opacity: 1;
     }
 
     /* MVP榜单 */
@@ -571,7 +574,7 @@
     <div id="matches" class="matches-section">
       <div class="section-title">📝 战报回看</div>
       
-        <div class="match-card">
+        <a href="2026-01-09-内战.html" class="match-card">
           <div class="match-header">
             <div class="match-title">冬日激战!知己足球俱乐部内战精彩纷呈</div>
             <div class="match-meta">
@@ -582,15 +585,15 @@
             </div>
           </div>
           <div class="match-summary">冬日不虚度，晴光忽满帘，周六上午知己队再战福沁球场。 首发阵容 蓝队 : 辉哥、托蒂、王书记、喜力授、叶伯海、德国小弟 红队 : 张航、小王、东哥、叶老师、高主...</div>
-          <a href="2026-01-09-内战.html" class="read-more">
-            阅读全文
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <div class="match-card-hint">
+            点击查看详情
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
-          </a>
-        </div>
+          </div>
+        </a>
       
-        <div class="match-card">
+        <a href="2026-01-03-党校队.html" class="match-card">
           <div class="match-header">
             <div class="match-title">元旦假期福沁大对决,知己20-26憾负党校队</div>
             <div class="match-meta">
@@ -601,15 +604,15 @@
             </div>
           </div>
           <div class="match-summary">元旦假期福沁大对决,知己VS党校,两队精锐尽出,展开一场跌宕起伏的友好交流赛。 比赛背景 党校队坐拥前国脚黄德杰坐镇中场,实力强劲,开局不久便取得领先。知己队不...</div>
-          <a href="2026-01-03-党校队.html" class="read-more">
-            阅读全文
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <div class="match-card-hint">
+            点击查看详情
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
-          </a>
-        </div>
+          </div>
+        </a>
       
-        <div class="match-card">
+        <a href="2026-01-01-三海风.html" class="match-card">
           <div class="match-header">
             <div class="match-title">新年激战!知己VS三海风4-4战平</div>
             <div class="match-meta">
@@ -620,13 +623,13 @@
             </div>
           </div>
           <div class="match-summary">新元擎起，万象更新，高主席亲自部署亲自参加元旦杯传统赛事，元月一日上午，三海风VS知己，两队集结江夏学院共赴新程。 上半场 随着主裁一声哨响，上半场比赛正式打响...</div>
-          <a href="2026-01-01-三海风.html" class="read-more">
-            阅读全文
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <div class="match-card-hint">
+            点击查看详情
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
-          </a>
-        </div>
+          </div>
+        </a>
       
     </div>
 
