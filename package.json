@@ -4,6 +4,7 @@
   "description": "河伯FC足球队战报管理系统",
   "main": "index.js",
   "scripts": {
+    "update": "node scripts/update.js",
     "new": "node scripts/new-post.js",
     "parse": "node scripts/parse-report.js",
     "photos": "node scripts/organize-photos.js",
