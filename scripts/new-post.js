@@ -159,9 +159,24 @@ async function main() {
     if (!fs.existsSync(photosDir)) {
       fs.mkdirSync(photosDir, { recursive: true });
       console.log(`📸 照片文件夹已创建: photos/${date}/`);
-      console.log(`💡 请将照片放入该文件夹，然后运行: npm run add-photos\n`);
     } else {
-      console.log(`📸 照片文件夹已存在: photos/${date}/\n`);
+      console.log(`📸 照片文件夹已存在: photos/${date}/`);
+    }
+
+    // 自动打开照片文件夹
+    const { execSync } = require('child_process');
+    try {
+      const photosDirAbsolute = path.resolve(photosDir);
+      if (process.platform === 'win32') {
+        execSync(`explorer "${photosDirAbsolute}"`);
+      } else if (process.platform === 'darwin') {
+        execSync(`open "${photosDirAbsolute}"`);
+      } else {
+        execSync(`xdg-open "${photosDirAbsolute}"`);
+      }
+      console.log(`✅ 照片文件夹已打开\n`);
+    } catch (error) {
+      console.log(`💡 请手动打开文件夹: ${photosDir}\n`);
     }
 
     console.log('💡 下一步操作:');

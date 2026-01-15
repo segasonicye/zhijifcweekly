@@ -36,7 +36,8 @@
       "Bash(git push:*)",
       "Bash(copy:*)",
       "Bash(dir:*)",
-      "Bash(ping:*)"
+      "Bash(ping:*)",
+      "Bash(npm run wechat:*)"
     ],
     "deny": [],
     "ask": []

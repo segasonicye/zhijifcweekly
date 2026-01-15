@@ -14,6 +14,7 @@
     "matches": "node scripts/modern-matches.js",
     "matches-classic": "node scripts/matches-view.js",
     "sync": "node scripts/sync-wechat.js",
+    "wechat": "node scripts/wechat-auto.js",
     "deploy-drop": "node scripts/deploy-drop.js",
     "setup-netlify": "node scripts/setup-netlify.js",
     "deploy": "node scripts/deploy.js"
