@@ -15,6 +15,10 @@
     "matches-classic": "node scripts/matches-view.js",
     "sync": "node scripts/sync-wechat.js",
     "wechat": "node scripts/wechat-auto.js",
+    "wechat:date": "node scripts/wechat-specific.js",
+    "wechat:latest": "node scripts/wechat-workflow.js",
+    "wechat:all": "node scripts/wechat-workflow.js all",
+    "publish": "node scripts/publish-wechat.js",
     "deploy-drop": "node scripts/deploy-drop.js",
     "setup-netlify": "node scripts/setup-netlify.js",
     "deploy": "node scripts/deploy.js"

@@ -146,6 +146,14 @@ function generateWechatArticle(matchData, matchBody) {
     `;
   }
 
+  // Logo部分
+  const logoPath = path.resolve(__dirname, '..', 'logo.png').replace(/\\/g, '/');
+  const logoSection = `
+    <div style="text-align: center; margin: 0 0 20px 0;">
+      <img src="file:///${logoPath}" alt="知己足球俱乐部 Logo" style="width: 120px; height: 120px; display: block; margin: 0 auto; border-radius: 50%; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);" />
+    </div>
+  `;
+
   // 构建比赛信息框
   const infoBox = `
     <section style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 15px; margin: 25px 0; color: white; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);">
@@ -184,13 +192,14 @@ function generateWechatArticle(matchData, matchBody) {
   // 构建完整文章
   const article = `
     <div style="max-width: 650px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%); padding: 20px; border-radius: 20px;">
+      ${logoSection}
       ${infoBox}
       ${mvpSection}
       <section style="padding: 15px 0; line-height: 1.9; color: #4a4a6a;">
         ${contentHTML}
       </section>
-      ${photosSection}
       ${attendanceSection}
+      ${photosSection}
       <section style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; margin: 35px 0 0 0; border-radius: 15px; text-align: center; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.25);">
         <p style="margin: 0; color: white; font-size: 16px; font-weight: 600;">— 感谢阅读 —</p>
         <p style="margin: 12px 0 0 0; color: rgba(255,255,255,0.9); font-size: 14px; font-weight: 500;">

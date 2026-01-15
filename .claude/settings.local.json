@@ -37,7 +37,15 @@
       "Bash(copy:*)",
       "Bash(dir:*)",
       "Bash(ping:*)",
-      "Bash(npm run wechat:*)"
+      "Bash(npm run wechat:*)",
+      "Bash(start https://zhijifcweekly.netlify.app)",
+      "Bash(start https://zhijifc.netlify.app/)",
+      "Bash(start \"\" \"output\\2026-01-01-三海风.html\")",
+      "Bash(npm run sync:*)",
+      "Bash(npm run wechat:date:*)",
+      "Bash(start:*)",
+      "Bash(npm run wechat:latest:*)",
+      "Bash(npm run publish:*)"
     ],
     "deny": [],
     "ask": []
