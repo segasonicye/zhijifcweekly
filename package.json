@@ -19,6 +19,8 @@
     "wechat:latest": "node scripts/wechat-workflow.js",
     "wechat:all": "node scripts/wechat-workflow.js all",
     "publish": "node scripts/publish-wechat.js",
+    "publish:ins": "node scripts/publish-ins.js",
+    "publish:battle": "node scripts/publish-battle.js",
     "deploy-drop": "node scripts/deploy-drop.js",
     "setup-netlify": "node scripts/setup-netlify.js",
     "deploy": "node scripts/deploy.js"
