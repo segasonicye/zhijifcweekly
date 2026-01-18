@@ -21,6 +21,8 @@
     "publish": "node scripts/publish-wechat.js",
     "publish:ins": "node scripts/publish-ins.js",
     "publish:battle": "node scripts/publish-battle.js",
+    "bot": "node scripts/wechat-bot.js",
+    "bot:test": "node scripts/bot-test.js",
     "deploy-drop": "node scripts/deploy-drop.js",
     "setup-netlify": "node scripts/setup-netlify.js",
     "deploy": "node scripts/deploy.js"
