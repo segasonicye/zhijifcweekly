@@ -35,3 +35,4 @@ yarn-error.log
 
 # Windows reserved names
 nul
+.claude/settings.local.json
