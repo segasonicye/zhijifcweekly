@@ -23,7 +23,8 @@
     "publish:battle": "node scripts/publish-battle.js",
     "deploy-drop": "node scripts/deploy-drop.js",
     "setup-netlify": "node scripts/setup-netlify.js",
-    "deploy": "node scripts/deploy.js"
+    "deploy": "node scripts/deploy.js",
+    "celebration": "node scripts/create-celebration.js"
   },
   "keywords": [
     "football",
