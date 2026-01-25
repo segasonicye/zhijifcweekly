@@ -51,7 +51,8 @@
       "Bash(npm run publish:battle:*)",
       "Bash(npm run bot:test:*)",
       "Bash(ls:*)",
-      "Bash(npm run vote:*)"
+      "Bash(npm run vote:*)",
+      "Bash(open:*)"
     ],
     "deny": [],
     "ask": []

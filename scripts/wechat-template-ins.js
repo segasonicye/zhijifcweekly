@@ -31,7 +31,7 @@ function getArticleTemplate(data, contentHTML, photos = [], logoPath = null) {
   // 构建比赛信息框 - 极简卡片风格
   const infoBox = `
     <section style="background: #fff; padding: 35px 30px; margin: 30px 0; border: 1px solid #e8e8e8; border-radius: 12px; text-align: center;">
-      <h1 style="font-size: 28px; margin: 0 0 25px 0; font-weight: 600; color: #000; letter-spacing: 0.5px; line-height: 1.4;">${data.title || '⚽ 比赛战报'}</h1>
+      <h1 style="font-size: 28px; margin: 0 0 25px 0; font-weight: 600; color: #fff; letter-spacing: 0.5px; line-height: 1.4; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px;">${data.title || '⚽ 比赛战报'}</h1>
 
       <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
         ${data.date ? `<span style="background: #f5f5f5; padding: 8px 16px; border-radius: 20px; font-size: 14px; color: #666; letter-spacing: 0.5px;">${data.date}</span>` : ''}
