@@ -49,7 +49,9 @@
       "WebSearch",
       "Bash(npm run publish:ins:*)",
       "Bash(npm run publish:battle:*)",
-      "Bash(npm run bot:test:*)"
+      "Bash(npm run bot:test:*)",
+      "Bash(ls:*)",
+      "Bash(npm run vote:*)"
     ],
     "deny": [],
     "ask": []

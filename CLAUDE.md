@@ -42,6 +42,9 @@ This is a match report management system for 河伯FC (Hebo FC) / 知己FC, an a
 - `npm run parse` - Parse existing match report text and extract structured data
 - `npm run auto-parse` - Auto-parse utility
 
+### Voting & Engagement
+- `npm run vote` - Generate WeChat article for team anthem voting (interactive prompt)
+
 ## Architecture
 
 ### Data Model
