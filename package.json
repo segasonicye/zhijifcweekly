@@ -25,12 +25,15 @@
     "deploy-drop": "node scripts/deploy-drop.js",
     "setup-netlify": "node scripts/setup-netlify.js",
     "deploy": "node scripts/deploy.js",
-    "celebration": "node scripts/create-celebration.js"
+    "celebration": "node scripts/create-celebration.js",
+    "daily-report": "node scripts/daily-report.js",
+    "smart-report": "node scripts/smart-report.js"
   },
   "keywords": [
     "football",
     "match-report",
-    "wechat"
+    "wechat",
+    "automation"
   ],
   "author": "河伯FC",
   "license": "MIT",
