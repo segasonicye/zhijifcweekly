@@ -52,7 +52,9 @@
       "Bash(npm run bot:test:*)",
       "Bash(ls:*)",
       "Bash(npm run vote:*)",
-      "Bash(open:*)"
+      "Bash(open:*)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)"
     ],
     "deny": [],
     "ask": []
