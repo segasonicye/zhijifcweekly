@@ -92,17 +92,161 @@ async function createMatchReport(filename, content) {
 }
 
 /**
+ * 从战报文本中解析信息
+ */
+function parseReportText(text) {
+  // 已知球员名单（从历史战报中收集）
+  const knownPlayers = [
+    '托蒂', '金日卢', '德国小弟', '王峰', '张航', '王一辰', '大鼻涕', '小卢', '公正',
+    '喜力授', '小王', '超仕', '叉叉', '叉弟', '小叶', '涛哥', '辉哥', '王书记',
+    '叶伯海', '高主席', '潘书记', '东哥', '叶老师', '陈韬'
+  ];
+
+  const result = {
+    date: null,
+    opponent: null,
+    location: null,
+    mvp: null,
+    scorers: [],
+    attendance: []
+  };
+
+  // 提取日期
+  if (text.includes('1月收官')) {
+    result.date = '2026-01-31';
+  } else if (text.includes('2月收官')) {
+    result.date = '2026-02-28';
+  } else {
+    // 尝试提取日期格式
+    const dateMatch = text.match(/(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日/);
+    if (dateMatch) {
+      const [, year, month, day] = dateMatch;
+      result.date = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+  }
+
+  // 提取地点
+  const locationKeywords = ['福沁球场', '朝阳公园', '党校队', '三海风'];
+  for (const keyword of locationKeywords) {
+    if (text.includes(keyword)) {
+      result.location = keyword;
+      break;
+    }
+  }
+
+  // 提取对手
+  if (text.includes('红蓝两队') || text.includes('内战')) {
+    result.opponent = '内战';
+  } else {
+    for (const keyword of locationKeywords) {
+      if (keyword !== '福沁球场' && keyword !== '朝阳公园' && text.includes(keyword)) {
+        result.opponent = keyword;
+        break;
+      }
+    }
+  }
+
+  // 提取MVP
+  if (text.includes('最佳射手')) {
+    const mvpIndex = text.indexOf('最佳射手');
+    const mvpSection = text.substring(Math.max(0, mvpIndex - 50), Math.min(text.length, mvpIndex + 50));
+
+    for (const player of knownPlayers) {
+      if (mvpSection.includes(`${player}蝉联最佳射手`)) {
+        result.mvp = player;
+        break;
+      }
+    }
+  }
+
+  // 提取进球球员
+  const goalActions = ['捅射', '射门', '抽射', '推射', '扫射', '劲射', '补射', '破门', '入网', '得手'];
+
+  for (const player of knownPlayers) {
+    if (text.includes(player)) {
+      const playerContext = text.split(player);
+      for (let i = 1; i < playerContext.length; i++) {
+        const context = playerContext[i].substring(0, 30);
+        for (const action of goalActions) {
+          if (context.includes(action)) {
+            if (!result.scorers.find(s => s.name === player)) {
+              result.scorers.push({ name: player, minute: null });
+            }
+            break;
+          }
+        }
+        if (result.scorers.find(s => s.name === player)) {
+          break;
+        }
+      }
+    }
+  }
+
+  // 提取出勤人员
+  for (const player of knownPlayers) {
+    if (text.includes(player)) {
+      result.attendance.push(player);
+    }
+  }
+
+  result.attendance.sort();
+
+  return result;
+}
+
+/**
  * 主函数
  */
 async function main() {
   console.log('\n=== 创建新战报 ===\n');
 
+  let parsedData = null;
+
   try {
+    // 询问是否使用自动解析
+    const useAutoParse = await question('是否粘贴战报文字自动提取信息？(y/n, 默认n): ');
+
+    if (useAutoParse.toLowerCase() === 'y' || useAutoParse.toLowerCase() === 'yes') {
+      console.log('\n请粘贴战报文字 (输入完成后按回车，然后输入 ===END=== 结束):\n');
+
+      let reportText = '';
+      while (true) {
+        const line = await question('> ');
+        if (line.trim() === '===END===') {
+          break;
+        }
+        reportText += line + '\n';
+      }
+
+      console.log('\n正在解析战报...\n');
+      parsedData = parseReportText(reportText);
+
+      console.log('📊 解析结果:');
+      console.log(`   日期: ${parsedData.date || '未提取'}`);
+      console.log(`   对手: ${parsedData.opponent || '未提取'}`);
+      console.log(`   地点: ${parsedData.location || '未提取'}`);
+      console.log(`   MVP: ${parsedData.mvp || '未提取'}`);
+      console.log(`   进球球员: ${parsedData.scorers.map(s => s.name).join('、') || '无'}`);
+      console.log(`   出勤人员: ${parsedData.attendance.join('、') || '无'}\n`);
+    }
+
     // 收集基本信息
-    const date = await question('请输入比赛日期 (YYYY-MM-DD, 如 2025-01-12): ');
-    const opponent = await question('请输入对手名称: ');
+    const datePrompt = parsedData && parsedData.date
+      ? `请输入比赛日期 (默认: ${parsedData.date}): `
+      : '请输入比赛日期 (YYYY-MM-DD, 如 2025-01-12): ';
+    const date = (await question(datePrompt)) || (parsedData?.date || '');
+
+    const opponentPrompt = parsedData && parsedData.opponent
+      ? `请输入对手名称 (默认: ${parsedData.opponent}): `
+      : '请输入对手名称: ';
+    const opponent = (await question(opponentPrompt)) || (parsedData?.opponent || '');
+
     const score = await question('请输入比分 (如 3-2, 如未比赛可留空): ');
-    const location = await question('请输入比赛地点 (如: 朝阳公园): ');
+
+    const locationPrompt = parsedData && parsedData.location
+      ? `请输入比赛地点 (默认: ${parsedData.location}): `
+      : '请输入比赛地点 (如: 朝阳公园): ';
+    const location = (await question(locationPrompt)) || (parsedData?.location || '');
 
     // 生成标题
     let title = `${date} ${opponent}`;
@@ -116,8 +260,17 @@ async function main() {
 
     // 收集出勤名单
     console.log('\n请输入出勤人员 (用逗号或空格分隔):');
-    const attendanceInput = await question('人员: ');
-    const attendance = attendanceInput
+    let attendanceInput = '';
+
+    if (parsedData && parsedData.attendance.length > 0) {
+      console.log(`(解析到的人员: ${parsedData.attendance.join('、')})`);
+      console.log('按回车使用解析结果，或手动修改:');
+      attendanceInput = await question('人员: ');
+    } else {
+      attendanceInput = await question('人员: ');
+    }
+
+    const attendance = (attendanceInput || (parsedData?.attendance?.join('、') || ''))
       .split(/[,，\s]+/)
       .filter(p => p.trim())
       .map(p => p.trim());

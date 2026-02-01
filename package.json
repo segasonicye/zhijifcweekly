@@ -27,7 +27,8 @@
     "deploy": "node scripts/deploy.js",
     "celebration": "node scripts/create-celebration.js",
     "daily-report": "node scripts/daily-report.js",
-    "smart-report": "node scripts/smart-report.js"
+    "smart-report": "node scripts/smart-report.js",
+    "monthly": "node scripts/monthly-summary-wechat.js"
   },
   "keywords": [
     "football",
