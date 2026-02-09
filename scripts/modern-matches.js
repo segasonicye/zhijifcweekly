@@ -14,32 +14,101 @@ const matter = require('gray-matter');
  */
 function readMatches() {
   const matchesDir = path.join(__dirname, '..', 'matches');
+  const outputDir = path.join(__dirname, '..', 'output');
+
   if (!fs.existsSync(matchesDir)) {
     return [];
   }
 
-  const files = fs.readdirSync(matchesDir)
+  // 获取所有已生成的HTML文件
+  const generatedFiles = fs.existsSync(outputDir) ? fs.readdirSync(outputDir) : [];
+
+  const matchFiles = fs.readdirSync(matchesDir)
     .filter(file => file.endsWith('.md'))
     .sort()
     .reverse();
 
-  return files.map(file => {
+  const files = matchFiles.map(file => {
     const filePath = path.join(matchesDir, file);
     const content = fs.readFileSync(filePath, 'utf-8');
     const { data, content: body } = matter(content);
 
     const cleanBody = body.replace(/[#*`\-\n]/g, ' ').replace(/\s+/g, ' ').trim();
     const summary = cleanBody.substring(0, 80) + '...';
-    const previewFile = file.replace('.md', '.html');
-    const previewPath = path.join(__dirname, '..', 'output', previewFile);
+
+    // 查找该比赛的所有已生成样式
+    const baseName = file.replace('.md', '');
+    const styles = [];
+
+    // 检查各种样式的文件是否存在
+    // 格式: wechat-{baseName}-{style}.html 或 wechat-{baseName}.html
+
+    // Fresh
+    if (generatedFiles.includes(`wechat-${baseName}-fresh.html`)) {
+      styles.push({ name: 'Fresh (清新)', type: 'fresh', file: `wechat-${baseName}-fresh.html` });
+    }
+    // Cyber
+    if (generatedFiles.includes(`wechat-${baseName}-cyber.html`)) {
+      styles.push({ name: 'Cyber (赛博)', type: 'cyber', file: `wechat-${baseName}-cyber.html` });
+    }
+    // Field
+    if (generatedFiles.includes(`wechat-${baseName}-field.html`)) {
+      styles.push({ name: 'Field (绿茵)', type: 'field', file: `wechat-${baseName}-field.html` });
+    }
+    // Ins
+    if (generatedFiles.includes(`wechat-${baseName}-ins.html`)) {
+      styles.push({ name: 'Ins (极简)', type: 'ins', file: `wechat-${baseName}-ins.html` });
+    }
+    // Battle
+    if (generatedFiles.includes(`wechat-${baseName}-battle.html`)) {
+      styles.push({ name: 'Battle (热血)', type: 'battle', file: `wechat-${baseName}-battle.html` });
+    }
+    // Default/Original
+    if (generatedFiles.includes(`wechat-${baseName}.html`)) {
+      styles.push({ name: 'Classic (经典)', type: 'default', file: `wechat-${baseName}.html` });
+    }
+
+    // 兼容旧版命名
+    if (generatedFiles.includes(`${baseName}.html`)) {
+      styles.push({ name: 'Preview', type: 'default', file: `${baseName}.html` });
+    }
 
     return {
       file,
-      previewPath,
       ...data,
       summary,
+      styles,
       body: body.substring(0, 500)
     };
+  });
+
+  // 查找月度总结报告
+  const summaryFiles = generatedFiles.filter(f => f.match(/^\d{4}-\d{2}-monthly-summary-wechat\.html$/));
+
+  const summaries = summaryFiles.map(file => {
+    const match = file.match(/^(\d{4})-(\d{2})-monthly-summary-wechat\.html$/);
+    const year = match[1];
+    const month = match[2];
+
+    return {
+      file: `summary-${year}-${month}`, // Fake ID
+      date: `${year}-${month}-31`, // Sort at end of month
+      title: `${year}年${month}月赛事总结`,
+      opponent: '月度报告',
+      score: '📊',
+      summary: `${year}年${month}月全队数据统计分析，包含MVP榜、射手榜和出勤率统计。`,
+      mvp: '全队',
+      styles: [
+        { name: 'WeChat Report', type: 'fresh', file: file }
+      ],
+      body: '',
+      isReport: true // Flag to style differently if needed
+    };
+  });
+
+  // 合并并按日期排序
+  return [...files, ...summaries].sort((a, b) => {
+    return new Date(b.date) - new Date(a.date);
   });
 }
 
@@ -68,6 +137,21 @@ function calculateMVPStats(matches) {
   });
 
   return Object.values(mvpStats).sort((a, b) => b.count - a.count);
+}
+
+/**
+ * 获取样式颜色
+ */
+function getStyleColor(type) {
+  const styles = {
+    'fresh': 'background: #e8f8f5; color: #2ecc71; border-color: #2ecc71;',
+    'cyber': 'background: #1a1a2e; color: #00f3ff; border-color: #00f3ff;',
+    'field': 'background: #134e5e; color: #fff; border-color: #71b280;',
+    'ins': 'background: #fafafa; color: #333; border-color: #333;',
+    'battle': 'background: #fff0f0; color: #ff6b6b; border-color: #ff6b6b;',
+    'default': 'background: #f0f4ff; color: #667eea; border-color: #667eea;'
+  };
+  return styles[type] || styles['default'];
 }
 
 /**
@@ -650,24 +734,36 @@ function generateHTML(matches, mvpStats) {
     <div id="matches" class="matches-section">
       <div class="section-title">📝 战报回看</div>
       ${matches.map(match => `
-        <a href="${match.file.replace('.md', '.html')}" class="match-card">
+        <div class="match-card">
           <div class="match-header">
             <div class="match-title">${match.title || match.date}</div>
             <div class="match-meta">
               <span class="meta-item">📅 ${match.date}</span>
               <span class="meta-item">⚔️ ${match.opponent}</span>
               <span class="meta-item">${match.score}</span>
-              ${match.mvp ? `<span class="meta-item mvp">⭐ ${match.mvp}</span>` : ''}
+              ${match.mvp ? `<span class="meta-item mvp">⭐ MVP: ${match.mvp}</span>` : ''}
             </div>
           </div>
           <div class="match-summary">${match.summary}</div>
-          <div class="match-card-hint">
-            点击查看详情
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
+          
+          <div class="style-links" style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+            ${match.styles && match.styles.length > 0 ?
+      match.styles.map(style => `
+                <a href="${style.file}" class="style-badge ${style.type}" style="
+                  text-decoration: none;
+                  padding: 6px 12px;
+                  border-radius: 15px;
+                  font-size: 12px;
+                  font-weight: 600;
+                  transition: all 0.2s;
+                  border: 1px solid rgba(0,0,0,0.1);
+                  ${getStyleColor(style.type)}
+                ">${style.name}</a>
+              `).join('')
+      : '<span style="color: #999; font-size: 13px;">暂无已生成战报 (请运行 npm run p/pi/pb/pf/pc/pg)</span>'
+    }
           </div>
-        </a>
+        </div>
       `).join('')}
     </div>
 

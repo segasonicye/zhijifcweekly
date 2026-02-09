@@ -66,7 +66,7 @@ function getArticleTemplate(data, contentHTML, photos = [], logoPath = null) {
 
       return `
         <div style="margin: 25px 0;">
-          <img src="${imgName}" alt="${caption}" style="width: 100%; max-width: 600px; display: block; margin: 0 auto; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.15);" />
+          <img src="${imgPath}" alt="${caption}" style="width: 100%; max-width: 600px; display: block; margin: 0 auto; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.15);" />
           ${caption ? `<p style="text-align: center; color: #667eea; font-size: 15px; margin: 10px 0 0 0; font-weight: 600;">${caption}</p>` : ''}
         </div>
       `;

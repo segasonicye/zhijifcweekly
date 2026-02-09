@@ -86,7 +86,7 @@ function getArticleTemplate(data, contentHTML, photos = [], logoPath = null) {
 
       return `
         <div style="margin: ${index === 0 ? '0' : '40px'} 0 0 0;">
-          <img src="${imgName}" alt="${caption}" style="width: 100%; display: block; border-radius: 8px;" />
+          <img src="${imgPath}" alt="${caption}" style="width: 100%; display: block; border-radius: 8px;" />
           ${caption ? `<p style="text-align: center; color: #999; font-size: 12px; margin: 12px 0 0 0; letter-spacing: 1px;">${caption}</p>` : ''}
         </div>
       `;
@@ -107,7 +107,7 @@ function getArticleTemplate(data, contentHTML, photos = [], logoPath = null) {
     <section style="margin: 60px 0 40px 0; padding: 30px 0; border-top: 1px solid #e8e8e8; text-align: center;">
       <p style="margin: 0 0 8px 0; color: #000; font-size: 14px; font-weight: 500; letter-spacing: 2px;">感谢阅读</p>
       <p style="margin: 0; color: #999; font-size: 12px; letter-spacing: 1px;">
-        知己足球俱乐部 · 每周末与你相约
+        知己足球俱乐部，每周末与你相伴
       </p>
       <div style="margin-top: 20px;">
         <span style="display: inline-block; width: 30px; height: 1px; background: #e0e0e0;"></span>

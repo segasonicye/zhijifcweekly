@@ -28,7 +28,23 @@
     "celebration": "node scripts/create-celebration.js",
     "daily-report": "node scripts/daily-report.js",
     "smart-report": "node scripts/smart-report.js",
-    "monthly": "node scripts/monthly-summary-wechat.js"
+    "monthly": "node scripts/monthly-summary-wechat.js",
+    "check-data": "node scripts/check-data.js",
+    "publish:smart": "node scripts/publish-smart.js",
+    "photos:compress": "node scripts/compress-photos.js",
+    "p": "npm run publish",
+    "pi": "npm run publish:ins",
+    "pb": "npm run publish:battle",
+    "n": "npm run new",
+    "s": "npm run stats",
+    "save": "git add . && git commit -m 'Auto save' && git push",
+    "publish:fresh": "node scripts/publish-fresh.js",
+    "publish:cyber": "node scripts/publish-cyber.js",
+    "publish:field": "node scripts/publish-field.js",
+    "pf": "npm run publish:fresh",
+    "pc": "npm run publish:cyber",
+    "pg": "npm run publish:field",
+    "serve": "node scripts/serve.js"
   },
   "keywords": [
     "football",
@@ -39,7 +55,8 @@
   "author": "河伯FC",
   "license": "MIT",
   "dependencies": {
-    "gray-matter": "^4.0.3"
+    "gray-matter": "^4.0.3",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "netlify-cli": "^23.13.3"

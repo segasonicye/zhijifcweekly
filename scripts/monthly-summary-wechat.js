@@ -111,19 +111,19 @@ function generateWechatMonthlySummary(year, month) {
             <th style="padding: 10px 12px; font-size: 13px; font-weight: 600; text-align: left; width: 60px;">出场</th>
           </tr>
           ${sortedGoals.slice(0, 15).map((item, index) => {
-            const rank = index + 1;
-            const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank.toString().padStart(2, '0');
-            const playerAttendance = attendance[item[0]] || 1;
-            const avg = (item[1] / playerAttendance).toFixed(2);
-            const bg = rank <= 3 ? 'background: #fff3cd;' : rank % 2 === 0 ? 'background: #f8f9fa;' : 'background: #fff;';
-            return `<tr style="${bg}">
+    const rank = index + 1;
+    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank.toString().padStart(2, '0');
+    const playerAttendance = attendance[item[0]] || 1;
+    const avg = (item[1] / playerAttendance).toFixed(2);
+    const bg = rank <= 3 ? 'background: #fff3cd;' : rank % 2 === 0 ? 'background: #f8f9fa;' : 'background: #fff;';
+    return `<tr style="${bg}">
               <td style="padding: 11px 12px; font-size: 14px; border-bottom: 1px solid #e8e8e8;">${medal}</td>
               <td style="padding: 11px 12px; font-size: 14px; border-bottom: 1px solid #e8e8e8;">${item[0]}</td>
               <td style="padding: 11px 12px; font-size: 14px; border-bottom: 1px solid #e8e8e8; font-weight: bold;">${item[1]}</td>
               <td style="padding: 11px 12px; font-size: 14px; border-bottom: 1px solid #e8e8e8;">${avg}</td>
               <td style="padding: 11px 12px; font-size: 14px; border-bottom: 1px solid #e8e8e8;">${playerAttendance}</td>
             </tr>`;
-          }).join('')}
+  }).join('')}
         </table>
       </section>
 
@@ -138,17 +138,17 @@ function generateWechatMonthlySummary(year, month) {
             <th style="padding: 10px 12px; font-size: 13px; font-weight: 600; text-align: left; width: 80px;">出勤率</th>
           </tr>
           ${sortedAttendance.slice(0, 15).map((item, index) => {
-            const rank = index + 1;
-            const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank.toString().padStart(2, '0');
-            const rate = ((item[1] / files.length) * 100).toFixed(1);
-            const bg = rank <= 3 ? 'background: #fff3cd;' : rank % 2 === 0 ? 'background: #f8f9fa;' : 'background: #fff;';
-            return `<tr style="${bg}">
+    const rank = index + 1;
+    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank.toString().padStart(2, '0');
+    const rate = ((item[1] / files.length) * 100).toFixed(1);
+    const bg = rank <= 3 ? 'background: #fff3cd;' : rank % 2 === 0 ? 'background: #f8f9fa;' : 'background: #fff;';
+    return `<tr style="${bg}">
               <td style="padding: 11px 12px; font-size: 14px; border-bottom: 1px solid #e8e8e8;">${medal}</td>
               <td style="padding: 11px 12px; font-size: 14px; border-bottom: 1px solid #e8e8e8;">${item[0]}</td>
               <td style="padding: 11px 12px; font-size: 14px; border-bottom: 1px solid #e8e8e8; font-weight: bold;">${item[1]}</td>
               <td style="padding: 11px 12px; font-size: 14px; border-bottom: 1px solid #e8e8e8;">${rate}%</td>
             </tr>`;
-          }).join('')}
+  }).join('')}
         </table>
       </section>
 
@@ -189,5 +189,8 @@ const month = 1;
 const outputFile = generateWechatMonthlySummary(year, month);
 
 // 打开预览
-const { exec } = require('child_process');
-exec(`open "${outputFile}"`);
+// 打开预览
+if (!process.env.NO_OPEN) {
+  const { exec } = require('child_process');
+  exec(`open "${outputFile}"`);
+}

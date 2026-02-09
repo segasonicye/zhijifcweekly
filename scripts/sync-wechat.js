@@ -174,7 +174,7 @@ function generateWechatArticle(matchData, matchBody) {
       <section style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; margin: 35px 0 0 0; border-radius: 15px; text-align: center; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.25);">
         <p style="margin: 0; color: white; font-size: 16px; font-weight: 600;">— 感谢阅读 —</p>
         <p style="margin: 12px 0 0 0; color: rgba(255,255,255,0.9); font-size: 14px; font-weight: 500;">
-          知己足球俱乐部 · 每周末与你相约 ⚽
+          知己足球俱乐部，每周末与你相伴
         </p>
       </section>
     </div>

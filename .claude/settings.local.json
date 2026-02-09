@@ -54,7 +54,8 @@
       "Bash(npm run vote:*)",
       "Bash(open:*)",
       "Bash(git pull:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []

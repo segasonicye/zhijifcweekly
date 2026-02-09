@@ -41,8 +41,7 @@ function markdownToHTML(markdown) {
 
   // 图片
   html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => {
-    const imgName = path.basename(src);
-    return `<img src="${imgName}" alt="${alt}" style="width: 100%; max-width: 600px; display: block; margin: 15px auto; border-radius: 8px;" />`;
+    return `<img src="${src}" alt="${alt}" style="width: 100%; max-width: 600px; display: block; margin: 15px auto; border-radius: 8px;" />`;
   });
 
   // 链接

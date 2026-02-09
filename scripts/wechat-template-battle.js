@@ -109,7 +109,7 @@ function getArticleTemplate(data, contentHTML, photos = [], logoPath = null) {
       return `
         <div style="margin: ${index === 0 ? '0' : '35px'} 0 0 0;">
           <div style="position: relative;">
-            <img src="${imgName}" alt="${caption}" style="width: 100%; display: block; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);" />
+            <img src="${imgPath}" alt="${caption}" style="width: 100%; display: block; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);" />
             <div style="position: absolute; top: 15px; right: 15px; background: rgba(255, 107, 107, 0.9); color: #fff; padding: 8px 15px; border-radius: 20px; font-size: 12px; font-weight: 700; backdrop-filter: blur(10px);">
               ${index + 1}
             </div>
@@ -142,7 +142,7 @@ function getArticleTemplate(data, contentHTML, photos = [], logoPath = null) {
 
       <p style="margin: 0 0 10px 0; color: #ffd93d; font-size: 18px; font-weight: 700; letter-spacing: 2px; position: relative; z-index: 1;">感谢阅读</p>
       <p style="margin: 0 0 15px 0; color: #fff; font-size: 14px; letter-spacing: 1px; position: relative; z-index: 1;">
-        知己足球俱乐部 · 每周末与你相约
+        知己足球俱乐部，每周末与你相伴
       </p>
       <div style="display: inline-flex; align-items: center; gap: 10px; margin-top: 20px; position: relative; z-index: 1;">
         <span style="font-size: 20px;">⚔️</span>
