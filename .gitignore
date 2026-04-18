@@ -36,3 +36,10 @@ yarn-error.log
 # Windows reserved names
 nul
 .claude/settings.local.json
+
+# WeChat Config (Sensitive)
+wechat-config.json
+wechat-config-*.json
+wechat-config.json
+.env
+.env.example
