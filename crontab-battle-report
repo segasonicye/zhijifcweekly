@@ -1,0 +1,38 @@
+# 战报自动化任务 Cron Job 配置
+#
+# 使用方法：
+# 1. 备份当前 crontab: crontab -l > crontab.backup
+# 2. 追加此文件: cat crontab-battle-report >> crontab.backup
+# 3. 安装新 crontab: crontab crontab.backup
+#
+# 注意事项：
+# - 每个任务的路径需要根据实际情况调整
+# - 确保脚本有执行权限 (chmod +x)
+# - 日志目录需要存在或有写权限
+
+# ========================================
+# 战报自动化任务
+# ========================================
+
+# 示例1: 每周一早上 08:00 提醒生成上周战报
+# 0 8 * * 1 /usr/local/bin/node /Users/yesu/zhijifcweekly/scripts/battle-report-reminder.js >> /Users/yesu/zhijifcweekly/logs/battle-report/cron-reminder.log 2>&1
+
+# 示例2: 每次有新战报文件时自动生成预览（需要 inotifywait）
+# inotifywait -m /Users/yesu/zhijifcweekly/matches/ -e close_write -e create |
+#     while read path action file; do
+#         echo "检测到新文件: $file"
+#         /usr/local/bin/node /Users/yesu/zhijifcweekly/scripts/battle-report-pipeline.sh "/Users/yesu/zhijifcweekly/matches/$file" >> /Users/yesu/zhijifcweekly/logs/battle-report/cron-auto.log 2>&1
+#     done
+
+# 示例3: 每周日凌晨 02:00 更新战报回看页面
+# 0 2 * * 0 /usr/local/bin/node /Users/yesu/zhijifcweekly/scripts/modern-matches.js >> /Users/yesu/zhijifcweekly/logs/battle-report/cron-update.log 2>&1
+
+# 示例4: 每天凌晨 03:00 清理旧日志（保留7天）
+# 0 3 * * * find /Users/yesu/zhijifcweekly/logs/battle-report -name "*.log" -mtime +7 -delete
+
+# ========================================
+# 备用任务（确保执行）
+# ========================================
+
+# 备用：每天早上 09:00 再次检查（确保流程正常）
+# 0 9 * * * /usr/local/bin/node /Users/yesu/zhijifcweekly/scripts/battle-report-health-check.js >> /Users/yesu/zhijifcweekly/logs/battle-report/cron-health.log 2>&1

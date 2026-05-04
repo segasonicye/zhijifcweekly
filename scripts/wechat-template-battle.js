@@ -17,12 +17,14 @@ function getArticleTemplate(data, contentHTML, photos = [], logoPath = null) {
   // 判断是否为外战
   const isExternalMatch = !data.opponent || data.opponent.includes('内战') === false;
 
-  // Logo部分 - 战斗风格占位
-  const logoSection = `
-    <div style="text-align: center; margin: 0 0 30px 0; padding: 25px; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); border: 3px solid #ff6b6b; border-radius: 12px; box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);">
-      <p style="margin: 0; color: #fff; font-size: 15px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;">⚔️ 上传 Logo 后删除此框</p>
-    </div>
-  `;
+  // Logo部分 - 激活状态
+  const logoSection = logoPath && logoPath !== 'logo-200.png'
+    ? `<div style="text-align: center; margin: 0 0 25px 0;">
+        <img src="${logoPath}" alt="Logo" style="width: 100px; height: 100px; border-radius: 50%; border: 4px solid #ff6b6b; box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4); object-fit: cover;" />
+       </div>`
+    : `<div style="text-align: center; margin: 0 0 30px 0; padding: 20px; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); border: 3px dashed #ff6b6b; border-radius: 12px;">
+        <p style="margin: 0; color: #fff; font-size: 14px; font-weight: 600; letter-spacing: 1px;">⚠️ 请替换 logo-200.png 为实际logo</p>
+       </div>`;
 
   // 顶部战斗装饰
   const topBattleDecor = `
@@ -41,6 +43,10 @@ function getArticleTemplate(data, contentHTML, photos = [], logoPath = null) {
       <!-- 背景装饰 -->
       <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
       <div style="position: absolute; bottom: -30px; left: -30px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+
+            <div style="margin-bottom: 20px;">
+        <img src="logo-200.png" alt="Logo" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.3); box-shadow: 0 4px 10px rgba(0,0,0,0.1);" />
+      </div>
 
       <h1 style="font-size: 30px; margin: 0 0 25px 0; font-weight: 800; color: #fff; letter-spacing: 1px; line-height: 1.4; text-shadow: 0 2px 10px rgba(0,0,0,0.2); position: relative; z-index: 1;">${data.title || '⚽ 热血外战'}</h1>
 

@@ -109,7 +109,7 @@ function markdownToHTML(markdown, styles = {}) {
     // 3. 图片处理 (统一路径逻辑)
     html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => {
         // 始终使用完整相对路径
-        const imgStyle = styles.img || 'width: 100%; max-width: 600px; display: block; margin: 15px auto; border-radius: 8px;';
+        const imgStyle = styles.img || 'width: 100%; max-width: 560px; display: block; margin: 20px auto; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); object-fit: cover;';
         return `<img src="${src}" alt="${alt}" style="${imgStyle}" />`;
     });
 

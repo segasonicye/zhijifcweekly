@@ -31,6 +31,9 @@
     "monthly": "node scripts/monthly-summary-wechat.js",
     "check-data": "node scripts/check-data.js",
     "publish:smart": "node scripts/publish-smart.js",
+    "publish:auto": "node scripts/upload-to-wechat.js",
+    "publish:battle-report": "node scripts/publish-battle-report.js",
+    "publish:history": "node scripts/publish-history.js",
     "photos:compress": "node scripts/compress-photos.js",
     "p": "npm run publish",
     "pi": "npm run publish:ins",
@@ -55,8 +58,14 @@
   "author": "河伯FC",
   "license": "MIT",
   "dependencies": {
+    "axios": "^1.13.5",
+    "form-data": "^4.0.5",
     "gray-matter": "^4.0.3",
-    "sharp": "^0.34.5"
+    "marked": "^17.0.2",
+    "node-fetch": "^2.7.0",
+    "puppeteer-core": "^24.37.2",
+    "sharp": "^0.34.5",
+    "solarlunar": "^2.0.7"
   },
   "devDependencies": {
     "netlify-cli": "^23.13.3"

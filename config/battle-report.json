@@ -1,0 +1,27 @@
+{
+  "paths": {
+    "matchesDir": "matches",
+    "photosDir": "photos",
+    "outputDir": "output",
+    "logoPath": "logo-150.png",
+    "logoLarge": "logo-200.png",
+    "posterDir": "output/posters"
+  },
+  "publish": {
+    "defaultStyle": "raphael:stripe",
+    "autoOpenComment": true,
+    "onlyFansComment": false,
+    "aiCover": true
+  },
+  "logging": {
+    "level": "info",
+    "logDir": "logs/battle-report",
+    "enableMetrics": true
+  },
+  "retry": {
+    "maxRetries": 3,
+    "baseDelay": 1000,
+    "maxDelay": 30000,
+    "factor": 2
+  }
+}

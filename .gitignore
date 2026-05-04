@@ -26,9 +26,22 @@ yarn-error.log
 .env
 .env.local
 
-# Photo temp folder (optional)
-# Uncomment if you don't want to track raw photos
-# photos/raw/
+# Photo files (too large for GitHub)
+photos/
+
+# Video factory assets (1GB+, not for GitHub)
+video-factory/
+
+# Generated images
+compressed_*.jpg
+*.png
+*.jpg
+!logo.png
+!logo.jpg
+!logo-*.png
+
+# Logs
+logs/
 
 # Local Netlify folder
 .netlify

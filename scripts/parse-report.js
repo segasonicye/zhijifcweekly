@@ -9,6 +9,19 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 const matter = require('gray-matter');
+const { Logger } = require('./utils/logger');
+const { Validator } = require('./utils/validator');
+const { Metrics } = require('./utils/metrics');
+
+// 初始化日志器
+const logDir = path.join(__dirname, '..', 'logs/battle-report');
+const logger = new Logger({
+  level: 'info',
+  logFile: path.join(logDir, `parse-report-${new Date().toISOString().slice(0, 10)}.log`)
+});
+
+// 初始化指标采集器
+const metrics = new Metrics();
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -77,7 +90,9 @@ function extractPlayers(text) {
  * 创建比赛记录
  */
 async function createFromText() {
+  metrics.startTimer('total');
   console.log('\n=== 从战报文章生成结构化数据 ===\n');
+  logger.info('Starting parse-report workflow');
 
   // 获取比赛日期
   const date = await question('请输入比赛日期 (YYYY-MM-DD, 如 2025-01-18): ');
@@ -166,11 +181,24 @@ async function createFromText() {
     attendance: attendance
   };
 
+  // 验证数据
+  logger.info('Validating match data...');
+  try {
+    Validator.validateMatch(frontmatter);
+    logger.info('Data validation passed', { filename });
+  } catch (error) {
+    logger.error('Data validation failed', { error: error.message });
+    console.error('❌ 数据验证失败:', error.message);
+    rl.close();
+    process.exit(1);
+  }
+
   // 组装完整内容
   const content = matter.stringify(reportText, frontmatter);
 
   // 写入文件
   fs.writeFileSync(filePath, content, 'utf-8');
+  logger.info('Match report created', { filename, path: filePath });
   console.log(`\n✅ 战报已创建: ${filename}`);
   console.log(`📂 路径: ${filePath}\n`);
 
@@ -185,7 +213,12 @@ async function createFromText() {
 
 // 运行
 createFromText().catch(error => {
+  logger.error('Fatal error in parse-report', { error: error.message, stack: error.stack });
   console.error('❌ 发生错误:', error.message);
   rl.close();
   process.exit(1);
+}).finally(() => {
+  // 打印性能指标
+  metrics.printSummary();
+  logger.info('Parse-report completed');
 });
