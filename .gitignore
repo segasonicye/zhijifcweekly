@@ -56,3 +56,4 @@ wechat-config-*.json
 wechat-config.json
 .env
 .env.example
+__pycache__/

@@ -13,7 +13,9 @@
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
-const { execSync } = require('child_process');
+const { execSync, execFile } = require('child_process');
+const { promisify } = require('util');
+const execFileAsync = promisify(execFile);
 const matter = require('gray-matter');
 const FormData = require('form-data');
 const { getLatestMatch, resolveMatchFile, markdownToHTML, log } = require('./utils/publish-helper');
@@ -203,16 +205,81 @@ async function getAccessToken(appId, appSecret) {
   const data = await res.json();
 
   if (data.errcode) {
+    // invalid ip 自动诊断：微信报错里的 IP 才是白名单判定依据
+    const ipMatch = String(data.errmsg || '').match(/invalid ip ([\d.]+)/i);
+    if (ipMatch) {
+      log(`\n🚫 检测到微信 IP 白名单错误`, 'red');
+      log(`   微信报错 IP（以此为准加白）: ${ipMatch[1]}`, 'yellow');
+      try {
+        const wechatIp = execSync(`curl -s --max-time 8 https://api.ipify.org`).toString().trim();
+        if (wechatIp && wechatIp !== ipMatch[1]) {
+          log(`   当前出口 IP（建议一并加入）: ${wechatIp}`, 'yellow');
+        } else if (wechatIp) {
+          log(`   当前出口 IP 与报错 IP 一致: ${wechatIp}`, 'yellow');
+        }
+      } catch (_) { /* 出口 IP 查询失败不影响诊断主线 */ }
+      log(`   👉 请到公众号后台「基本配置-IP白名单」添加后重试发布`, 'cyan');
+    }
     throw new Error(`获取Access Token失败: ${data.errmsg}`);
   }
   return data.access_token;
 }
 
 /**
- * 确保图片大小符合微信限制 (2MB)
- * 如果超过限制，使用 ffmpeg 自动压缩
+ * 检查草稿箱是否已存在同名标题的草稿，防止重复创建
+ * 返回已存在草稿的信息（media_id + 时间），不存在则返回 null
  */
-function ensureImageSize(filePath) {
+async function findDuplicateDraft(accessToken, title) {
+  const url = `${API_BASE}/draft/batchget?access_token=${accessToken}`;
+  // 只翻最近 100 条（订阅号日常量级足够）
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ offset: 0, count: 20, no_content: 1 })
+  });
+  const data = await res.json();
+
+  if (data.errcode) {
+    // 查重失败不阻塞发布（保守策略），只提示
+    log(`⚠️ 草稿查重接口失败（忽略）: ${data.errmsg}`, 'yellow');
+    return null;
+  }
+
+  let remaining = (data.total_count || 0) - (data.item_count || 0);
+  let items = data.item || [];
+  const seen = [...items];
+
+  while (remaining > 0 && seen.length < 100) {
+    const r2 = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ offset: seen.length, count: 20, no_content: 1 })
+    });
+    const d2 = await r2.json();
+    if (d2.errcode) break;
+    items = d2.item || [];
+    if (items.length === 0) break;
+    seen.push(...items);
+    remaining -= items.length;
+  }
+
+  const hit = seen.find(item => {
+    const article = (item.content && item.content.news_item && item.content.news_item[0]) || {};
+    return article.title === title;
+  });
+
+  if (!hit) return null;
+  return {
+    mediaId: hit.media_id,
+    updatedAt: new Date((hit.update_time || hit.create_time || 0) * 1000).toISOString()
+  };
+}
+
+/**
+ * 确保图片大小符合微信限制 (2MB)
+ * 如果超过限制，使用 ffmpeg 自动压缩（异步，不阻塞事件循环）
+ */
+async function ensureImageSize(filePath) {
   try {
     const stats = fs.statSync(filePath);
     const maxSize = 2 * 1024 * 1024; // 2MB
@@ -222,20 +289,20 @@ function ensureImageSize(filePath) {
     }
 
     log(`   ⚠️ 图片超过 2MB (${(stats.size / 1024 / 1024).toFixed(2)}MB)，启动自动压缩...`, 'yellow');
-    
+
     const ext = path.extname(filePath);
     const tempPath = path.join(path.dirname(filePath), `compressed_${Date.now()}_${path.basename(filePath, ext)}.jpg`);
-    
+
     // 使用 ffmpeg 压缩：限制最大宽度 1280，转换为 jpg 格式通常体积更小
-    execSync(`ffmpeg -i "${filePath}" -vf "scale='min(1280,iw)':-1" -q:v 2 "${tempPath}" -y`, { stdio: 'ignore' });
-    
+    await execFileAsync('ffmpeg', ['-i', filePath, '-vf', "scale='min(1280,iw)':-1", '-q:v', '2', tempPath, '-y']);
+
     const newStats = fs.statSync(tempPath);
     log(`   ✅ 压缩完成: ${(newStats.size / 1024 / 1024).toFixed(2)}MB`, 'green');
-    
+
     // 注册到清理列表
     if (!global.tempFiles) global.tempFiles = [];
     global.tempFiles.push(tempPath);
-    
+
     return tempPath;
   } catch (e) {
     log(`   ❌ 压缩失败: ${e.message}，尝试原图上传。`, 'red');
@@ -246,15 +313,16 @@ function ensureImageSize(filePath) {
 /**
  * 上传图片 (用于正文)
  * 返回 URL
- * 使用 curl 上传，最稳定
+ * 使用 curl 上传（execFile 异步，参数数组不经 shell），最稳定
  */
 async function uploadImage(accessToken, filePath) {
-  const finalPath = ensureImageSize(filePath);
+  const finalPath = await ensureImageSize(filePath);
   const url = `${API_BASE}/media/uploadimg?access_token=${accessToken}`;
-  const cmd = `curl -s -X POST -F "media=@${finalPath}" "${url}"`;
-  
-  const output = execSync(cmd, { encoding: 'utf-8' });
-  const data = JSON.parse(output);
+  const args = ['-sS', '--retry', '3', '--retry-all-errors', '--connect-timeout', '15', '--max-time', '120',
+    '-X', 'POST', '-F', `media=@${finalPath}`, url];
+
+  const { stdout } = await execFileAsync('curl', args, { encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 });
+  const data = JSON.parse(stdout);
 
   if (data.errcode) {
     throw new Error(`上传图片失败 (${path.basename(filePath)}): ${data.errmsg}`);
@@ -265,15 +333,16 @@ async function uploadImage(accessToken, filePath) {
 /**
  * 上传封面图 (永久素材)
  * 返回 media_id
- * 使用 curl 上传，最稳定
+ * 使用 curl 上传（execFile 异步，参数数组不经 shell），最稳定
  */
 async function uploadCover(accessToken, filePath) {
-  const finalPath = ensureImageSize(filePath);
+  const finalPath = await ensureImageSize(filePath);
   const url = `${API_BASE}/material/add_material?access_token=${accessToken}&type=image`;
-  const cmd = `curl -s -X POST -F "media=@${finalPath}" "${url}"`;
-  
-  const output = execSync(cmd, { encoding: 'utf-8' });
-  const data = JSON.parse(output);
+  const args = ['-sS', '--retry', '3', '--retry-all-errors', '--connect-timeout', '15', '--max-time', '120',
+    '-X', 'POST', '-F', `media=@${finalPath}`, url];
+
+  const { stdout } = await execFileAsync('curl', args, { encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 });
+  const data = JSON.parse(stdout);
 
   if (data.errcode) {
     throw new Error(`上传封面图失败: ${data.errmsg}`);
@@ -286,22 +355,39 @@ async function uploadCover(accessToken, filePath) {
  */
 async function createDraft(accessToken, article) {
   const url = `${API_BASE}/draft/add?access_token=${accessToken}`;
-  
+
   const payload = {
     articles: [article]
   };
 
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-  const data = await res.json();
+  // 超时 + 一次重试，避免 fetch 无限挂起或瞬时网络抖动直接失败
+  let lastError;
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 30000);
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+      clearTimeout(timer);
+      const data = await res.json();
 
-  if (data.errcode) {
-    throw new Error(`创建草稿失败: ${data.errmsg}`);
+      if (data.errcode) {
+        throw new Error(`创建草稿失败: ${data.errmsg}`);
+      }
+      return data.media_id; // 草稿ID
+    } catch (e) {
+      lastError = e;
+      if (attempt < 2) {
+        log(`⚠️ 创建草稿失败/超时，30s 后重试一次: ${e.message}`, 'yellow');
+        await new Promise(r => setTimeout(r, 30000));
+      }
+    }
   }
-  return data.media_id; // 草稿ID
+  throw lastError;
 }
 
 /**
@@ -323,6 +409,7 @@ async function main() {
 
     if (!config || !config.appId || !config.appSecret) {
       log(`❌ 账号 "${accountName}" 未配置或缺少 AppID 和 AppSecret`, 'red');
+      process.exitCode = 1;
       return;
     }
 
@@ -333,6 +420,7 @@ async function main() {
     const matchFile = resolveMatchFile(argFile);
     if (!matchFile) {
       log('❌ 未找到比赛文件', 'red');
+      process.exitCode = 1;
       return;
     }
 
@@ -431,6 +519,32 @@ async function main() {
     const token = await getAccessToken(config.appId, config.appSecret);
     log('✅ Access Token 获取成功', 'green');
 
+    // 2.5 防重复草稿：默认阻塞，--force 跳过
+    const forceDuplicate = hasFlag(cli, ['--force']);
+    if (!forceDuplicate) {
+      const dup = await findDuplicateDraft(token, data.title);
+      if (dup) {
+        const dupLogPath = writePublishLog({
+          ...buildPublishMeta({
+            accountName, matchFile, filePath, data,
+            style: getOptionValue(cli, ['--style']) || 'default',
+            showScore, strictPreflight, aiCoverEnabled, preflightReport
+          }),
+          outcome: 'duplicate-blocked',
+          stoppedAt: new Date().toISOString(),
+          stopReason: 'duplicate-draft-title',
+          duplicateDraftId: dup.mediaId,
+          duplicateUpdatedAt: dup.updatedAt
+        });
+        log(`🚫 草稿箱已存在同名草稿（更新于 ${dup.updatedAt}）`, 'red');
+        log(`   Draft ID: ${dup.mediaId}`, 'cyan');
+        log(`   记录: ${path.relative(path.join(__dirname, '..'), dupLogPath)}`, 'cyan');
+        log(`   确认要重建草稿请加 --force（旧草稿需在后台手动删除）`, 'yellow');
+        process.exitCode = 1;
+        return;
+      }
+    }
+
     // 3. 并行：上传文中图片 + 生成 AI 封面（默认直出生图，失败回退 HTML）
     let aiCoverPath = null;
     const coverPromise = aiCoverEnabled ? (async () => {
@@ -486,41 +600,58 @@ async function main() {
         }
       }
 
-      // 逐个上传并替换
+      // 4 路并发上传（保持替换顺序稳定：先全部拿回结果，再按原顺序替换）
       let logoWechatUrl = null;
-      for (const img of imagesToUpload) {
-        // 解析绝对路径
-        const imgPath = path.resolve(__dirname, '..', img.src);
-        if (fs.existsSync(imgPath)) {
-          log(`   ⬆️  上传: ${path.basename(img.src)}`, 'blue');
-          try {
-            const wechatUrl = await uploadImage(token, imgPath);
-            
-            // 捕获 Logo 的 URL
-            if (path.basename(img.src).includes('logo')) {
-               logoWechatUrl = wechatUrl;
-            }
+      const CONCURRENCY = 4;
+      const results = new Array(imagesToUpload.length).fill(null);
+      let nextIndex = 0;
 
-            // 替换 Markdown 中的链接为微信 URL
-            processedBody = processedBody.replace(img.src, wechatUrl);
-          } catch (e) {
-            log(`   ⚠️  上传失败: ${e.message}`, 'red');
+      async function worker() {
+        while (true) {
+          const i = nextIndex++;
+          if (i >= imagesToUpload.length) return;
+          const img = imagesToUpload[i];
+          const imgPath = path.resolve(__dirname, '..', img.src);
+          if (!fs.existsSync(imgPath)) {
+            log(`   ⚠️  图片未找到: ${img.src}`, 'yellow');
+            return; // 占位保持 null，不替换
           }
-        } else {
-          log(`   ⚠️  图片未找到: ${img.src}`, 'yellow');
+          log(`   ⬆️  上传: ${path.basename(img.src)}`, 'blue');
+          // 脚本级重试一次（curl 内部已有 --retry 3），仍失败则中止：
+          // 照片缺一张好修复，发出去的裂图无法补救
+          let wechatUrl = null;
+          for (let attempt = 1; attempt <= 2; attempt++) {
+            try {
+              wechatUrl = await uploadImage(token, imgPath);
+              break;
+            } catch (e) {
+              if (attempt === 2) {
+                throw new Error(`正文图片上传失败 (${path.basename(img.src)}): ${e.message}，已重试仍失败，中止发布`);
+              }
+              log(`   ⚠️  上传失败，重试: ${e.message}`, 'yellow');
+            }
+          }
+          results[i] = { img, wechatUrl };
         }
       }
 
-      // 确保 Logo 已上传（即使正文中没有引用 logo）
+      await Promise.all(Array.from({ length: Math.min(CONCURRENCY, imagesToUpload.length) }, worker));
+
+      // 按原顺序替换，保证多次 replace 语义与串行版一致
+      for (const r of results) {
+        if (!r) continue;
+        if (path.basename(r.img.src).includes('logo')) {
+          logoWechatUrl = r.wechatUrl;
+        }
+        processedBody = processedBody.replace(r.img.src, r.wechatUrl);
+      }
+
+      // 确保 Logo 已上传（即使正文中没有引用 logo）。正文模板依赖这个 URL；失败则不要继续创建缺 logo 的草稿。
       const defaultLogoPath = path.join(__dirname, '../logo-200.png');
       if (!logoWechatUrl && fs.existsSync(defaultLogoPath)) {
         log('🖼️  正在上传 Logo...', 'yellow');
-        try {
-          logoWechatUrl = await uploadImage(token, defaultLogoPath);
-          log('✅ Logo 已上传并获取正文链接', 'green');
-        } catch (e) {
-          log(`⚠️  Logo 上传失败: ${e.message}`, 'red');
-        }
+        logoWechatUrl = await uploadImage(token, defaultLogoPath);
+        log('✅ Logo 已上传并获取正文链接', 'green');
       }
 
       return { processedBody, logoWechatUrl };
@@ -563,6 +694,7 @@ async function main() {
       try {
         thumbMediaId = await uploadCover(token, coverPlan.expectedPath);
         if (coverPlan.sourceType === 'logo') {
+          // Logo 是正文模板依赖的 URL，失败必须中止，不能回退本地路径
           logoWechatUrl = await uploadImage(token, coverPlan.expectedPath);
           log('✅ Logo 已上传并获取正文链接', 'green');
         } else if (data.coverBody === false) {
@@ -576,6 +708,10 @@ async function main() {
         }
         log('✅ 封面图上传成功', 'green');
       } catch (e) {
+        if (coverPlan.sourceType === 'logo') {
+          // Logo 上传失败不可降级：模板会回退本地路径，微信端不显示（用户红线）
+          throw new Error(`Logo 上传失败（封面策略 logo 路线）: ${e.message}，中止发布`);
+        }
         log(`⚠️  封面图上传失败: ${e.message}`, 'red');
       }
     }
@@ -590,8 +726,9 @@ async function main() {
     log('📝 正在创建草稿...', 'yellow');
 
     // 解析模板风格参数 (默认为 'default')
-    let style = getOptionValue(cli, ['--style']) || config.defaultStyle || 'default';
-    
+    let style = getOptionValue(cli, ['--style']) || config.defaultStyle || 'raphael';
+    const indentEnabled = hasFlag(cli, ['--indent']);
+
     // 支持 raphael:theme 语法，提取主题名
     let themeName;
     if (style.startsWith('raphael')) {
@@ -599,8 +736,8 @@ async function main() {
         themeName = style.split(':')[1].trim();
         log(`🎨 使用排版风格: raphael (${themeName})`, 'cyan');
       } else {
-        themeName = 'claude';
-        log(`🎨 使用排版风格: raphael (claude)`, 'cyan');
+        themeName = 'zhiji';
+        log(`🎨 使用排版风格: raphael (zhiji)`, 'cyan');
       }
     } else {
       log(`🎨 使用排版风格: ${style}`, 'cyan');
@@ -618,7 +755,7 @@ async function main() {
 
     // 生成完整文章 HTML (正文只渲染比赛照片，不包括 Logo)
     // 传入捕获到的 logoWechatUrl 和配置选项
-    const articleHtml = getArticleTemplate(data, htmlContent, photosWithoutLogo, logoWechatUrl, { showScore, themeName });
+    const articleHtml = getArticleTemplate(data, htmlContent, photosWithoutLogo, logoWechatUrl, { showScore, themeName, indent: indentEnabled });
 
     const digestPlan = buildDigest({ data, body, maxLength: 110 });
     log(`📝 摘要策略: ${digestPlan.source} (${digestPlan.reason})`, 'cyan');
@@ -672,6 +809,13 @@ async function main() {
   } catch (error) {
     log(`❌ 发生错误: ${error.message}`, 'red');
     console.error(error);
+    // 失败也清理临时压缩文件
+    if (global.tempFiles && global.tempFiles.length > 0) {
+      global.tempFiles.forEach(file => {
+        if (fs.existsSync(file)) fs.unlinkSync(file);
+      });
+    }
+    process.exitCode = 1;
   }
 }
 

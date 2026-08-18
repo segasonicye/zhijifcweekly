@@ -16,15 +16,14 @@ const path = require('path');
 function getArticleTemplate(data, contentHTML, photos = [], logoPath = null) {
   // 判断是否为外战
   const isExternalMatch = !data.opponent || data.opponent.includes('内战') === false;
+  const hasUploadedLogo = logoPath && logoPath !== 'logo-200.png';
 
-  // Logo部分 - 激活状态
-  const logoSection = logoPath && logoPath !== 'logo-200.png'
+  // Logo部分 - 使用上传到微信后的真实 logo；没有时静默跳过，避免正文出现占位提示
+  const logoSection = hasUploadedLogo
     ? `<div style="text-align: center; margin: 0 0 25px 0;">
-        <img src="${logoPath}" alt="Logo" style="width: 100px; height: 100px; border-radius: 50%; border: 4px solid #ff6b6b; box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4); object-fit: cover;" />
+        <img src="${logoPath}" alt="Logo" style="width: 100px; height: 100px; display: block; margin: 0 auto; border-radius: 50%; border: 4px solid #ff6b6b; box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4); object-fit: cover;" />
        </div>`
-    : `<div style="text-align: center; margin: 0 0 30px 0; padding: 20px; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); border: 3px dashed #ff6b6b; border-radius: 12px;">
-        <p style="margin: 0; color: #fff; font-size: 14px; font-weight: 600; letter-spacing: 1px;">⚠️ 请替换 logo-200.png 为实际logo</p>
-       </div>`;
+    : '';
 
   // 顶部战斗装饰
   const topBattleDecor = `
@@ -44,9 +43,9 @@ function getArticleTemplate(data, contentHTML, photos = [], logoPath = null) {
       <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
       <div style="position: absolute; bottom: -30px; left: -30px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
 
-            <div style="margin-bottom: 20px;">
-        <img src="logo-200.png" alt="Logo" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.3); box-shadow: 0 4px 10px rgba(0,0,0,0.1);" />
-      </div>
+      ${hasUploadedLogo ? `<div style="margin-bottom: 20px; position: relative; z-index: 1;">
+        <img src="${logoPath}" alt="Logo" style="width: 80px; height: 80px; display: block; margin: 0 auto; border-radius: 50%; border: 3px solid rgba(255,255,255,0.3); box-shadow: 0 4px 10px rgba(0,0,0,0.1); object-fit: cover;" />
+      </div>` : ''}
 
       <h1 style="font-size: 30px; margin: 0 0 25px 0; font-weight: 800; color: #fff; letter-spacing: 1px; line-height: 1.4; text-shadow: 0 2px 10px rgba(0,0,0,0.2); position: relative; z-index: 1;">${data.title || '⚽ 热血外战'}</h1>
 
@@ -74,7 +73,6 @@ function getArticleTemplate(data, contentHTML, photos = [], logoPath = null) {
 
         <p style="margin: 0 0 15px 0; color: #fff; font-size: 14px; letter-spacing: 4px; text-transform: uppercase; font-weight: 700; text-shadow: 0 2px 5px rgba(0,0,0,0.2);">本场最佳 · MVP</p>
         <div style="font-size: 32px; font-weight: 800; color: #fff; letter-spacing: 2px; text-shadow: 0 3px 10px rgba(0,0,0,0.3); position: relative; z-index: 1;">${data.mvp}</div>
-        <div style="margin-top: 15px; font-size: 16px; color: rgba(255,255,255,0.9); font-weight: 500;">🌟 战斗英雄 🌟</div>
       </section>
     `;
   }
@@ -105,8 +103,10 @@ function getArticleTemplate(data, contentHTML, photos = [], logoPath = null) {
   }
 
   // 构建照片展示区 - 战斗镜头风格
+  // 如果正文已经显式插图，就不再追加 photos 数组，避免微信文章末尾重复出现同一批照片。
   let photosSection = '';
-  if (photos.length > 0) {
+  const contentHasImages = /<img\b/i.test(contentHTML || '');
+  if (photos.length > 0 && !contentHasImages) {
     const photosHTML = photos.map((photo, index) => {
       const imgPath = typeof photo === 'string' ? photo : (photo.path || '');
       const caption = photo.caption || (index === 0 ? '战斗瞬间' : '');
