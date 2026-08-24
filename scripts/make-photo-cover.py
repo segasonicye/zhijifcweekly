@@ -128,8 +128,27 @@ def load_soft_logo(logo_width):
     return logo
 
 
-def compose(cover, logo):
-    """自然融合三板斧：磨砂玻璃过渡区 + 暖色柔光 + 贴色温的软投影"""
+def _radial_layer(W, H, cx, cy, r_in, r_out, color, max_alpha):
+    """纯径向渐变层: r<=r_in 全强度, r>=r_out 全透明, 平方衰减。
+    2026-08-24 实测: 磨砂矩形 paste 法在平涂/插画背景上会泄漏可见方形半透明区域，已废弃。"""
+    layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    px = layer.load()
+    assert px is not None
+    r0 = r_out - r_in
+    for y in range(max(0, cy - r_out), min(H, cy + r_out)):
+        dy2 = (y - cy) ** 2
+        for x in range(max(0, cx - r_out), min(W, cx + r_out)):
+            r = (dy2 + (x - cx) ** 2) ** 0.5
+            if r < r_out:
+                t = max(0.0, 1.0 - (r - r_in) / r0) if r0 > 0 else (1.0 if r <= r_in else 0.0)
+                a = int(max_alpha * t * t)
+                if a > 0:
+                    px[x, y] = (color[0], color[1], color[2], a)
+    return layer
+
+
+def compose(cover, logo=None):
+    """径向融合（v4，2026-08-24 用户验收）: 暖光晕 + 径向软投影 + logo 97%"""
     W, H = cover.size
     logo_w = 230
     logo_img = load_soft_logo(logo_w)
@@ -138,48 +157,16 @@ def compose(cover, logo):
     pos_x = (W - lw) // 2
     pos_y = 20
     cx, cy = pos_x + lw // 2, pos_y + lh // 2
+    R = max(lw, lh) // 2
 
-    # 1) 磨砂玻璃过渡区：logo 背后一块椭圆区域，把照片局部高斯模糊+轻微提亮
-    #    —— 自然的视觉分离，代替硬徽章底衬
-    pad = 90  # 过渡区比 logo 大一圈
-    region = (cx - lw // 2 - pad, cy - lh // 2 - pad // 2,
-              cx + lw // 2 + pad, cy + lh // 2 + pad // 2)
-    region = (max(0, region[0]), max(0, region[1]), min(W, region[2]), min(H, region[3]))
+    # 1) 柔和暖光晕: 从 logo 边缘向外 150px 平方衰减（无任何形状边界）
+    cover = Image.alpha_composite(cover, _radial_layer(W, H, cx, cy, R - 10, R + 150, (255, 242, 214), 120))
 
-    backdrop = cover.crop(region)
-    blurred = backdrop.filter(ImageFilter.GaussianBlur(22))
-    # 轻微提亮 + 偏暖（磨砂玻璃感）
-    bright = Image.new("RGBA", blurred.size, (255, 248, 235, 46))
-    blurred = Image.alpha_composite(blurred, bright)
+    # 2) 贴合色温的径向软投影: 向下偏移 18px
+    cover = Image.alpha_composite(cover, _radial_layer(W, H, cx, cy + 18, R - 18, R + 55, (55, 38, 18), 120))
 
-    # 过渡区自身也要羽化边缘，避免磨砂区本身成为新的"硬块"
-    bw, bh = blurred.size
-    bmask = Image.new("L", (bw, bh), 0)
-    bmd = ImageDraw.Draw(bmask)
-    bmd.ellipse((-bw * 0.08, -bh * 0.15, bw * 1.08, bh * 1.15), fill=255)
-    bmask = bmask.filter(ImageFilter.GaussianBlur(50))
-
-    frosted_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    frosted_layer.paste(blurred, (region[0], region[1]), bmask)
-    cover = Image.alpha_composite(cover, frosted_layer)
-
-    # 2) 暖色柔光 halo：logo 周围一层低透明度暖金光晕，进一步融入暖金画面
-    halo = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    hd = ImageDraw.Draw(halo)
-    halo_r = max(lw, lh) // 2 + 46
-    hd.ellipse((cx - halo_r, cy - halo_r, cx + halo_r, cy + halo_r), fill=(255, 233, 180, 60))
-    halo = halo.filter(ImageFilter.GaussianBlur(55))
-    cover = Image.alpha_composite(cover, halo)
-
-    # 3) 贴合色温的软投影：暖棕色调、大模糊、向下偏移，模拟环境光遮挡
-    shadow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    sh = Image.new("RGBA", (lw, lh), (70, 50, 22, 90))
-    shadow.paste(sh, (pos_x, pos_y + 12), sh)
-    shadow = shadow.filter(ImageFilter.GaussianBlur(24))
-    cover = Image.alpha_composite(cover, shadow)
-
-    # 4) 贴 logo（95% 不透明度，留一丝通透感）
-    logo_img.putalpha(logo_img.split()[3].point(lambda v: int(v * 0.95)))
+    # 3) 贴 logo（97% 不透明度）
+    logo_img.putalpha(logo_img.split()[3].point(lambda v: int(v * 0.97)))
     cover.alpha_composite(logo_img, (pos_x, pos_y))
 
     return cover
